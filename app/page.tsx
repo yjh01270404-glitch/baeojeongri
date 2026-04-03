@@ -355,7 +355,7 @@ export default function Home() {
             </p>
             <h2 className="text-3xl font-black text-gray-900">주요 서비스</h2>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4">
             {SERVICES.map((s) => (
               <div
                 key={s.title}
@@ -407,28 +407,35 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-left">
-        <div className="mx-auto max-w-2xl px-6">
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+      <section id="cta" className="scroll-mt-20 border-t border-[#00B89A]/40 bg-[#00B89A] py-[60px] [word-break:keep-all]">
+        <div className="mx-auto w-full max-w-3xl px-5">
+          <div className="mb-6 flex justify-center">
+            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-xs font-semibold text-white">
+              배달라이더 전용 · 카카오맵/네이버지도 검색
+            </span>
+          </div>
+          <h2 className="text-left text-[28px] font-bold leading-[1.3] text-white md:text-[40px]">
             직접 경험한 리뷰를 공유하고
-            <br />
-            정비소 상세정보를 한눈에
           </h2>
-          <p className="mb-10 text-sm leading-relaxed text-white/70">
-            직접 작성한 리뷰로 정비소 상세정보가 잠금 해제됩니다. 네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.
+          <p className="mt-3 text-left text-[18px] font-bold leading-[1.3] text-[#FFFBE6]">
+            정비소 상세정보를 한눈에
           </p>
-          <div className="flex flex-wrap justify-start gap-3">
+          <div className="mt-6 text-left text-[14px] leading-[1.8] text-white/90">
+            <p>직접 작성한 리뷰로 정비소 상세정보가 잠금 해제됩니다.</p>
+            <p>네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.</p>
+          </div>
+          <div className="mt-8 flex items-center gap-3">
             <button
               type="button"
               onClick={() => setShowLogin(true)}
-              className="rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-[#00BFA5] transition-colors hover:bg-gray-50"
+              className="rounded-full bg-white px-6 py-3 text-sm font-bold text-[#00B89A] transition hover:bg-gray-50"
             >
               로그인하기
             </button>
             <button
               type="button"
               onClick={scrollToFinder}
-              className="rounded-xl border border-white/40 px-8 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
+              className="rounded-full border border-white px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
             >
               정비소 찾기
             </button>

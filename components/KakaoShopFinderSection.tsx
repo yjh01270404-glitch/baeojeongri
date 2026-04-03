@@ -578,7 +578,7 @@ export function KakaoShopFinderSection({
                           rel="noopener noreferrer"
                           className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A] px-3 py-1.5 text-xs font-bold text-white transition hover:brightness-95"
                         >
-                          네이버지도에서 보기
+                          네이버지도
                         </a>
                         <a
                           href={p.place_url}
@@ -586,7 +586,7 @@ export function KakaoShopFinderSection({
                           rel="noopener noreferrer"
                           className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#FEE500] bg-[#FEE500] px-3 py-1.5 text-xs font-bold text-[#3C1E1E] transition hover:brightness-95"
                         >
-                          카카오맵에서 보기
+                          카카오맵
                         </a>
                       </div>
                     </div>

@@ -168,7 +168,7 @@ export function PlaceDetailModal({
               rel="noopener noreferrer"
               className="inline-flex flex-1 items-center justify-center rounded-xl border border-[#03C75A] bg-[#03C75A] px-4 py-3 text-sm font-bold text-white transition hover:brightness-95"
             >
-              네이버지도에서 보기
+              네이버지도
             </a>
             <a
               href={place.place_url}
@@ -176,7 +176,7 @@ export function PlaceDetailModal({
               rel="noopener noreferrer"
               className="inline-flex flex-1 items-center justify-center rounded-xl border border-[#FEE500] bg-[#FEE500] px-4 py-3 text-sm font-bold text-[#3C1E1E] transition hover:brightness-95"
             >
-              카카오맵에서 보기
+              카카오맵
             </a>
           </div>
 
