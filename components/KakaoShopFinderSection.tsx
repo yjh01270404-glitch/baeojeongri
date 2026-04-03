@@ -14,7 +14,15 @@ export type { KakaoPlaceItem } from "@/lib/kakao-place";
 const DEFAULT_LAT = 37.5665;
 const DEFAULT_LNG = 126.978;
 
-const SEARCH_KEYWORDS = ["오토바이 정비", "바이크 정비", "이륜차 정비"];
+const SEARCH_KEYWORDS = [
+  "오토바이 정비",
+  "바이크 정비",
+  "이륜차 정비",
+  "오토바이 수리",
+  "바이크 수리",
+  "오토바이 센터",
+];
+const SEARCH_PAGES = [1, 2, 3, 4] as const;
 
 export type FinderTab = "realtime" | "distance" | "map";
 
@@ -126,40 +134,42 @@ export function KakaoShopFinderSection({
 
       const searchOpts = {
         location: loc,
-        radius: 12_000,
+        radius: 20_000,
         size: 15,
         sort: kakao.maps.services.SortBy.DISTANCE,
       };
 
       for (const keyword of SEARCH_KEYWORDS) {
-        await new Promise<void>((resolve) => {
-          ps.keywordSearch(
-            keyword,
-            (data, searchStatus) => {
-              if (
-                searchStatus === kakao.maps.services.Status.OK &&
-                Array.isArray(data)
-              ) {
-                for (const p of data) {
-                  merged.set(p.id, {
-                    id: p.id,
-                    place_name: p.place_name,
-                    category_name: p.category_name,
-                    phone: p.phone,
-                    address_name: p.address_name,
-                    road_address_name: p.road_address_name,
-                    x: p.x,
-                    y: p.y,
-                    place_url: p.place_url,
-                    distance: p.distance,
-                  });
+        for (const page of SEARCH_PAGES) {
+          await new Promise<void>((resolve) => {
+            ps.keywordSearch(
+              keyword,
+              (data, searchStatus) => {
+                if (
+                  searchStatus === kakao.maps.services.Status.OK &&
+                  Array.isArray(data)
+                ) {
+                  for (const p of data) {
+                    merged.set(p.id, {
+                      id: p.id,
+                      place_name: p.place_name,
+                      category_name: p.category_name,
+                      phone: p.phone,
+                      address_name: p.address_name,
+                      road_address_name: p.road_address_name,
+                      x: p.x,
+                      y: p.y,
+                      place_url: p.place_url,
+                      distance: p.distance,
+                    });
+                  }
                 }
-              }
-              resolve();
-            },
-            searchOpts,
-          );
-        });
+                resolve();
+              },
+              { ...searchOpts, page },
+            );
+          });
+        }
       }
 
       const list = [...merged.values()].sort((a, b) => {
@@ -168,7 +178,7 @@ export function KakaoShopFinderSection({
         return da - db;
       });
 
-      setPlaces(list.slice(0, 48));
+      setPlaces(list.slice(0, 120));
       setStatus("ready");
     } catch (e) {
       console.error(e);

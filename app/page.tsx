@@ -409,37 +409,9 @@ export default function Home() {
       {/* CTA */}
       <section id="cta" className="scroll-mt-20 border-t border-[#00B89A]/40 bg-[#00B89A] py-[60px] [word-break:keep-all]">
         <div className="mx-auto w-full max-w-3xl px-5">
-          <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-xs font-semibold text-white">
-              배달라이더 전용 · 카카오맵/네이버지도 검색
-            </span>
-          </div>
           <h2 className="text-left text-[28px] font-bold leading-[1.3] text-white md:text-[40px]">
-            직접 경험한 리뷰를 공유하고
+            당신의 한 줄이 시작입니다. 다음 라이더의 바가지를 막고, 결국엔 모든 정비소가 정직하게 장사하는 세상으로 이어집니다.
           </h2>
-          <p className="mt-3 text-left text-[18px] font-bold leading-[1.3] text-[#FFFBE6]">
-            정비소 상세정보를 한눈에
-          </p>
-          <div className="mt-6 text-left text-[14px] leading-[1.8] text-white/90">
-            <p>직접 작성한 리뷰로 정비소 상세정보가 잠금 해제됩니다.</p>
-            <p>네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.</p>
-          </div>
-          <div className="mt-8 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowLogin(true)}
-              className="rounded-full bg-white px-6 py-3 text-sm font-bold text-[#00B89A] transition hover:bg-gray-50"
-            >
-              로그인하기
-            </button>
-            <button
-              type="button"
-              onClick={scrollToFinder}
-              className="rounded-full border border-white px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
-            >
-              정비소 찾기
-            </button>
-          </div>
         </div>
       </section>
 
