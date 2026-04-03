@@ -20,6 +20,8 @@ const NAV_LINKS: NavItem[] = [
   { label: "정비소 찾기", href: "#shop-finder" },
   { label: "내 주변 정비소", href: "#shop-finder", requestNearbyGps: true },
   { label: "자가정비 정보", href: "#services" },
+  { label: "가입·리뷰·혜택 정책", href: "/policy" },
+  { label: "제보·신고", href: "/report" },
   {
     label: "정비소 등록 문의",
     href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 정비소 등록·제휴 문의")}`,
@@ -121,7 +123,7 @@ export default function Home() {
 
       {/* 상단 안내바 */}
       <div className="bg-[#00BFA5] py-2 text-xs text-white/80">
-        <div className="mx-auto max-w-7xl px-6 text-left">
+        <div className="mx-auto max-w-7xl px-6 text-center">
           배달라이더 전용 정비소 정보 플랫폼 ·{" "}
           {status === "loading" ? (
             <span className="font-bold text-white">세션 확인 중…</span>
@@ -184,7 +186,7 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-start gap-x-3 gap-y-2 border-t border-gray-100 pt-3 md:flex-1 md:border-0 md:pt-0">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t border-gray-100 pt-3 md:flex-1 md:border-0 md:pt-0">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
@@ -225,7 +227,7 @@ export default function Home() {
       </nav>
 
       {/* 히어로 */}
-      <section className="border-b border-gray-100 bg-white py-20 text-left sm:py-24">
+      <section className="border-b border-gray-100 bg-white py-20 text-center sm:py-24">
         <div className="mx-auto max-w-3xl px-6">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00BFA5]/30 bg-[#00BFA5]/8 px-4 py-1.5">
             <span className="text-xs font-semibold text-[#00BFA5]">
@@ -301,11 +303,11 @@ export default function Home() {
                 검색하기
               </button>
             </div>
-            <p className="mt-3 text-left text-xs text-gray-400">
+            <p className="mt-3 text-xs text-gray-400">
               자주 찾는 검색: 지역+작업(강남 엔진오일), 기종(PCX), 증상(브레이크
               소음), 시간대(심야)
             </p>
-            <div className="mt-5 flex flex-wrap justify-start gap-2.5 sm:gap-3">
+            <div className="mt-5 flex flex-wrap justify-center gap-2.5 sm:gap-3">
               {HERO_QUICK.map((q) => (
                 <button
                   key={q}
@@ -349,7 +351,7 @@ export default function Home() {
                 key={t.key}
                 type="button"
                 onClick={t.onClick}
-                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
+                className={`rounded-xl border px-2 py-4 text-center transition sm:px-4 ${
                   finderTab === t.key
                     ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
                     : "border-gray-100 bg-white hover:border-gray-200"
@@ -378,7 +380,7 @@ export default function Home() {
       {/* 주요 서비스 */}
       <section id="services" className="scroll-mt-20 bg-gray-50/50 py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-12 text-left">
+          <div className="mb-12 text-center">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
               SERVICES
             </p>
@@ -436,18 +438,23 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-left">
+      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-center">
         <div className="mx-auto max-w-2xl px-6">
           <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
-            로그인하고
+            직접 경험한 리뷰를 공유하고
             <br />
-            전화번호까지 한 번에
+            정비소 상세정보를 한눈에
           </h2>
           <p className="mb-10 text-sm leading-relaxed text-white/70">
-            네이버 계정으로 로그인하면 정비소 연락처가 풀립니다. 카카오·Google
-            로그인은 UI만 열어 두었으며 OAuth는 곧 연결할 예정입니다.
+            직접 작성한 리뷰로 “정비소 상세”가 잠금 해제됩니다.
+            네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.
+            카카오·Google은 UI만 준비되어 있으며 OAuth는 곧 연결할 예정입니다.
           </p>
-          <div className="flex flex-wrap justify-start gap-3">
+          <p className="-mt-6 mb-10 text-xs leading-relaxed text-white/80">
+            만약 로그인 동의 화면이 뜨지 않거나 오류가 발생하면, 서버 설정이 갱신 중이거나
+            잠시 지연될 수 있습니다. 1~2분 후 다시 시도해 주세요.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
             <button
               type="button"
               onClick={() => setShowLogin(true)}
@@ -510,6 +517,8 @@ export default function Home() {
                   title: "고객센터",
                   links: [
                     { label: "이용안내", href: "/#cta" },
+                    { label: "가입·리뷰·혜택 정책", href: "/policy" },
+                    { label: "제보·신고", href: "/report" },
                     {
                       label: "문의하기",
                       href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 문의")}`,
@@ -550,7 +559,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
+          <p className="mt-12 border-t border-gray-100 pt-6 text-center text-xs text-gray-400">
             © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을

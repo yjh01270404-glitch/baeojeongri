@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { Shop } from "@/lib/types";
 import {
@@ -81,12 +81,14 @@ function ReviewModal({ shopName, onClose, onSubmit }: { shopName: string; onClos
 }
 
 export default function ShopDetailClient({ shop }: { shop: Shop }) {
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem("boj_unlocked") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    setIsUnlocked(localStorage.getItem("boj_unlocked") === "true");
-  }, []);
 
   const handleUnlock = () => {
     localStorage.setItem("boj_unlocked", "true");

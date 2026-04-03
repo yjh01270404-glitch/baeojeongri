@@ -335,7 +335,7 @@ export function KakaoShopFinderSection({
         streetViewConfig={streetViewConfig}
       />
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-8 text-left">
+        <div className="mb-8 text-center">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
             FIND
           </p>
@@ -373,10 +373,10 @@ export function KakaoShopFinderSection({
             </p>
           )}
 
-          <p className="mt-8 max-w-2xl text-xs leading-relaxed text-gray-400">
+          <p className="mx-auto mt-8 max-w-2xl text-xs leading-relaxed text-gray-400">
             작업 종류 칩과 상단 검색어를 함께 쓰면 더 빠르게 좁힐 수 있어요.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
             {QUICK_FILTERS.map((q) => (
               <button
                 key={q}
@@ -416,13 +416,13 @@ export function KakaoShopFinderSection({
         </div>
 
         {status === "loading" && (
-          <div className="py-16 text-left text-sm font-medium text-gray-400">
+          <div className="py-16 text-center text-sm font-medium text-gray-400">
             주변 정비소를 불러오는 중…
           </div>
         )}
 
         {status === "ready" && filteredPlaces.length === 0 && (
-          <div className="py-16 text-left text-sm text-gray-500">
+          <div className="py-16 text-center text-sm text-gray-500">
             {places.length === 0
               ? "반경 내 검색 결과가 없습니다."
               : "조건에 맞는 정비소가 없습니다. 검색어나 작업 필터를 바꿔 보세요."}
@@ -447,7 +447,7 @@ export function KakaoShopFinderSection({
           finderTab === "map" &&
           filteredPlaces.length > 0 &&
           !kakaoSdkReady && (
-            <p className="mb-6 text-left text-sm text-gray-500">
+            <p className="mb-6 text-center text-sm text-gray-500">
               지도 SDK를 불러오는 중입니다. 잠시 후 다시 전환해 주세요.
             </p>
           )}
@@ -468,15 +468,17 @@ export function KakaoShopFinderSection({
                     }
                   }}
                   onClick={() => setDetailPlace(p)}
-                  className="cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
+                  className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
                 >
-                  <PlaceCardVisual
-                    lat={Number(p.y)}
-                    lng={Number(p.x)}
-                    placeName={p.place_name}
-                    streetViewConfig={streetViewConfig}
-                  />
-                  <div className="p-4 text-left">
+                  <div className="shrink-0">
+                    <PlaceCardVisual
+                      lat={Number(p.y)}
+                      lng={Number(p.x)}
+                      placeName={p.place_name}
+                      streetViewConfig={streetViewConfig}
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-4 text-left">
                     <h3 className="line-clamp-2 text-base font-bold text-gray-900">
                       {p.place_name}
                     </h3>
@@ -506,7 +508,7 @@ export function KakaoShopFinderSection({
                         )}
                       </div>
                     ) : null}
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-auto space-y-2 pt-3">
                       {p.distance ? (
                         <p className="text-xs font-bold text-[#00BFA5]">
                           {formatDistance(p.distance)} · 근처
@@ -540,7 +542,7 @@ export function KakaoShopFinderSection({
             </div>
           )}
 
-        <p className="mt-10 text-left text-[11px] leading-relaxed text-gray-400">
+        <p className="mt-10 text-center text-[11px] leading-relaxed text-gray-400">
           장소 데이터 © Kakao · 미로그인 시 전화번호는 일부만 표시됩니다.
         </p>
       </div>
