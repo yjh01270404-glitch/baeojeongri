@@ -10,6 +10,7 @@ const SUPPORT_EMAIL = "support@baeojeongri.kr";
 
 export default function PolicyPage() {
   const [showLogin, setShowLogin] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated";
 
@@ -23,7 +24,7 @@ export default function PolicyPage() {
     <div className="min-h-screen bg-white font-sans">
       {/* 네비게이션 */}
       <nav className="sticky top-0 z-40 border-b border-gray-100 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-3 md:h-16 md:py-0">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#00BFA5]">
@@ -41,7 +42,8 @@ export default function PolicyPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Desktop */}
+          <div className="hidden items-center gap-2 md:flex">
             <Link
               href="/report"
               className="text-sm font-medium text-gray-500 transition-colors hover:text-[#00BFA5]"
@@ -67,13 +69,71 @@ export default function PolicyPage() {
               </Button>
             )}
           </div>
+
+          {/* Mobile */}
+          <div className="flex items-center gap-2 md:hidden">
+            {isLoggedIn ? (
+              <span className="max-w-[7rem] truncate text-xs font-medium text-gray-600">
+                {session?.user?.name ?? session?.user?.email ?? "회원"}님
+              </span>
+            ) : null}
+            <button
+              type="button"
+              aria-label="메뉴 열기"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none">
+                <path
+                  d="M4 7h16M4 12h16M4 17h16"
+                  stroke="#00BFA5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
+
+      {mobileMenuOpen && (
+        <div className="border-t border-gray-100 bg-white md:hidden">
+          <div className="mx-auto max-w-7xl px-6 py-3">
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/report"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                제보·신고
+              </Link>
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"
+                >
+                  로그아웃
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowLogin(true)}
+                  className="w-full rounded-xl bg-[#00BFA5] px-4 py-3 text-sm font-bold text-white hover:bg-[#009E88]"
+                >
+                  로그인
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
       <main className="mx-auto max-w-3xl px-6 py-14">
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-left">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
             POLICY
           </p>
@@ -318,7 +378,7 @@ export default function PolicyPage() {
               ))}
             </div>
           </div>
-          <p className="mt-12 border-t border-gray-100 pt-6 text-center text-xs text-gray-400">
+          <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
             © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을

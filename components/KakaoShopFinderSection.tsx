@@ -42,12 +42,21 @@ function maskPhone(phone: string) {
 
 const QUICK_FILTERS = [
   "엔진오일",
+  "브레이크패드",
+  "구동계",
   "타이어",
-  "브레이크",
-  "전기",
-  "스쿠터",
-  "체인",
+  "전기·전장",
 ] as const;
+
+type QuickChip = (typeof QUICK_FILTERS)[number];
+
+const QUICK_CHIP_QUERIES: Record<QuickChip, string[]> = {
+  엔진오일: ["엔진오일", "오일"],
+  브레이크패드: ["브레이크", "패드"],
+  구동계: ["구동계", "체인", "스프라켓", "스프로켓", "기어"],
+  타이어: ["타이어"],
+  "전기·전장": ["전기", "전장"],
+};
 
 type Props = {
   heroFilter: string;
@@ -74,7 +83,7 @@ export function KakaoShopFinderSection({
   const [streetViewConfig, setStreetViewConfig] = useState<boolean | null>(
     null,
   );
-  const [chip, setChip] = useState<string>("");
+  const [chip, setChip] = useState<QuickChip | "">("");
   const [isApproximateLocation, setIsApproximateLocation] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -295,12 +304,14 @@ export function KakaoShopFinderSection({
 
   const filteredPlaces = useMemo(() => {
     const h = normalize(heroFilter);
-    const c = normalize(chip);
     let list = places.filter((p) => {
       const blob = normalize(
         `${p.place_name} ${p.category_name} ${p.address_name} ${p.road_address_name}`,
       );
-      if (c && !blob.includes(c)) return false;
+      if (chip) {
+        const queries = QUICK_CHIP_QUERIES[chip];
+        if (!queries.some((q) => blob.includes(normalize(q)))) return false;
+      }
       if (h && !blob.includes(h)) return false;
       return true;
     });
@@ -335,7 +346,7 @@ export function KakaoShopFinderSection({
         streetViewConfig={streetViewConfig}
       />
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-left">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
             FIND
           </p>
@@ -376,7 +387,7 @@ export function KakaoShopFinderSection({
           <p className="mx-auto mt-8 max-w-2xl text-xs leading-relaxed text-gray-400">
             작업 종류 칩과 상단 검색어를 함께 쓰면 더 빠르게 좁힐 수 있어요.
           </p>
-          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+          <div className="mt-5 flex flex-wrap justify-start gap-2.5">
             {QUICK_FILTERS.map((q) => (
               <button
                 key={q}
@@ -416,13 +427,13 @@ export function KakaoShopFinderSection({
         </div>
 
         {status === "loading" && (
-          <div className="py-16 text-center text-sm font-medium text-gray-400">
+          <div className="py-16 text-left text-sm font-medium text-gray-400">
             주변 정비소를 불러오는 중…
           </div>
         )}
 
         {status === "ready" && filteredPlaces.length === 0 && (
-          <div className="py-16 text-center text-sm text-gray-500">
+          <div className="py-16 text-left text-sm text-gray-500">
             {places.length === 0
               ? "반경 내 검색 결과가 없습니다."
               : "조건에 맞는 정비소가 없습니다. 검색어나 작업 필터를 바꿔 보세요."}
@@ -447,7 +458,7 @@ export function KakaoShopFinderSection({
           finderTab === "map" &&
           filteredPlaces.length > 0 &&
           !kakaoSdkReady && (
-            <p className="mb-6 text-center text-sm text-gray-500">
+            <p className="mb-6 text-left text-sm text-gray-500">
               지도 SDK를 불러오는 중입니다. 잠시 후 다시 전환해 주세요.
             </p>
           )}
@@ -522,7 +533,7 @@ export function KakaoShopFinderSection({
                           href={naverMapSearchUrl(p.place_name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A]/10 px-3 py-1.5 text-xs font-bold text-[#03C75A] transition hover:bg-[#03C75A] hover:text-white"
+                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A] px-3 py-1.5 text-xs font-bold text-white transition hover:brightness-95"
                         >
                           네이버지도에서 보기
                         </a>
@@ -530,7 +541,7 @@ export function KakaoShopFinderSection({
                           href={p.place_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#00BFA5] px-3 py-1.5 text-xs font-bold text-[#00BFA5] transition hover:bg-[#00BFA5] hover:text-white"
+                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#FEE500] bg-[#FEE500] px-3 py-1.5 text-xs font-bold text-[#3C1E1E] transition hover:brightness-95"
                         >
                           카카오맵에서 보기
                         </a>
@@ -542,7 +553,7 @@ export function KakaoShopFinderSection({
             </div>
           )}
 
-        <p className="mt-10 text-center text-[11px] leading-relaxed text-gray-400">
+        <p className="mt-10 text-left text-[11px] leading-relaxed text-gray-400">
           장소 데이터 © Kakao · 미로그인 시 전화번호는 일부만 표시됩니다.
         </p>
       </div>

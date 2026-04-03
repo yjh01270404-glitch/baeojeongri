@@ -66,6 +66,7 @@ export default function Home() {
   const [finderTab, setFinderTab] = useState<FinderTab>("realtime");
   const [realtimeTick, setRealtimeTick] = useState(0);
   const { data: session, status } = useSession();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -104,6 +105,7 @@ export default function Home() {
     e: ReactMouseEvent<HTMLAnchorElement>,
     item: NavItem,
   ) => {
+    setMobileMenuOpen(false);
     if ("requestNearbyGps" in item && item.requestNearbyGps) {
       e.preventDefault();
       dispatchRequestNearbyLocation();
@@ -124,85 +126,56 @@ export default function Home() {
       {/* 상단 안내바 */}
       <div className="bg-[#00BFA5] py-2 text-xs text-white/80">
         <div className="mx-auto max-w-7xl px-6 text-center">
-          배달라이더 전용 정비소 정보 플랫폼 ·{" "}
-          {status === "loading" ? (
-            <span className="font-bold text-white">세션 확인 중…</span>
-          ) : isLoggedIn ? (
-            <span className="font-bold text-white">
-              {session?.user?.name ?? session?.user?.email ?? "회원"}님,
-              환영합니다
-            </span>
-          ) : (
-            <span className="font-bold text-white">
-              로그인 시 정비소 전화번호 전체가 표시됩니다
-            </span>
-          )}
+          배달라이더 전용 정비소 정보 플랫폼
+          <br />
+          로그인 시 정비소의 상세정보가 표시됩니다
         </div>
       </div>
 
       {/* 네비게이션 */}
       <nav className="sticky top-0 z-40 border-b border-gray-100 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-3 md:h-16 md:flex-row md:items-center md:justify-between md:gap-6 md:py-0">
-          <div className="flex items-center justify-between gap-3 md:justify-start md:gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFA5]">
-                <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-                  <path
-                    d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 md:h-16 md:py-0">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFA5]">
+              <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                <path
+                  d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <div className="text-xl font-black leading-none text-[#00BFA5]">
+                배오정리
               </div>
-              <div className="min-w-0">
-                <div className="text-xl font-black leading-none text-[#00BFA5]">
-                  배오정리
-                </div>
-                <div className="mt-0.5 text-[10px] text-gray-400">
-                  배달 오토바이 정비소 · 실데이터
-                </div>
+              <div className="mt-0.5 text-[10px] text-gray-400">
+                배달 오토바이 정비소 · 실데이터
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2 md:hidden">
-              {session ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-gray-200 text-xs font-bold"
-                  onClick={() => void signOut({ callbackUrl: "/" })}
+          </div>
+
+          {/* Desktop menu */}
+          <div className="hidden items-center gap-6 md:flex">
+            <div className="flex items-center gap-5">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => onNavClick(e, link)}
+                  className="text-sm font-medium text-gray-500 transition-colors hover:text-[#00BFA5]"
                 >
-                  로그아웃
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  className="rounded-lg bg-[#00BFA5] px-4 font-bold text-white hover:bg-[#009E88]"
-                  onClick={() => setShowLogin(true)}
-                >
-                  로그인
-                </Button>
-              )}
+                  {link.label}
+                </a>
+              ))}
             </div>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t border-gray-100 pt-3 md:flex-1 md:border-0 md:pt-0">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => onNavClick(e, link)}
-                className="whitespace-nowrap text-xs font-medium text-gray-500 transition-colors hover:text-[#00BFA5] sm:text-sm"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-          <div className="hidden shrink-0 items-center gap-2 md:flex">
+
             {session ? (
-              <>
+              <div className="flex items-center gap-2">
                 <span className="max-w-[7rem] truncate text-xs text-gray-600">
-                  {session.user?.name ?? session.user?.email ?? ""}
+                  {session.user?.name ?? session.user?.email ?? "회원"}
                 </span>
                 <Button
                   type="button"
@@ -212,7 +185,7 @@ export default function Home() {
                 >
                   로그아웃
                 </Button>
-              </>
+              </div>
             ) : (
               <Button
                 type="button"
@@ -223,46 +196,123 @@ export default function Home() {
               </Button>
             )}
           </div>
+
+          {/* Mobile menu */}
+          <div className="flex items-center gap-2 md:hidden">
+            {session ? (
+              <>
+                <span className="max-w-[7rem] truncate text-xs font-medium text-gray-600">
+                  {session.user?.name ?? session.user?.email ?? "회원"}님
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-gray-200 bg-white px-3 text-xs font-bold"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                >
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="button"
+                className="rounded-lg bg-[#00BFA5] px-3 text-xs font-bold text-white hover:bg-[#009E88]"
+                onClick={() => setShowLogin(true)}
+              >
+                로그인
+              </Button>
+            )}
+
+            <button
+              type="button"
+              aria-label="메뉴 열기"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none">
+                <path
+                  d="M4 7h16M4 12h16M4 17h16"
+                  stroke="#00BFA5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {mobileMenuOpen && (
+          <div className="border-t border-gray-100 bg-white md:hidden">
+            <div className="mx-auto max-w-7xl px-6 py-3">
+              <div className="flex flex-col gap-2">
+                {NAV_LINKS.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => onNavClick(e, link)}
+                    className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+
+                <div className="mt-2 border-t border-gray-100 pt-3">
+                  {session ? (
+                    <button
+                      type="button"
+                      onClick={() => void signOut({ callbackUrl: "/" })}
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"
+                    >
+                      로그아웃
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowLogin(true)}
+                      className="w-full rounded-xl bg-[#00BFA5] px-4 py-3 text-sm font-bold text-white hover:bg-[#009E88]"
+                    >
+                      로그인
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* 히어로 */}
-      <section className="border-b border-gray-100 bg-white py-20 text-center sm:py-24">
+      <section className="border-b border-gray-100 bg-white py-20 sm:py-24">
         <div className="mx-auto max-w-3xl px-6">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00BFA5]/30 bg-[#00BFA5]/8 px-4 py-1.5">
             <span className="text-xs font-semibold text-[#00BFA5]">
               배달라이더 전용 · 카카오맵 실시간 검색
             </span>
           </div>
-          <h1 className="mb-8 text-4xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-5xl">
-            모르면 바가지,
+          <h1 className="mb-8 text-3xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-5xl">
+            만든이가 라이더로서 겪은
             <br />
-            알면 <span className="text-[#00BFA5]">제값.</span>
+            정비 가격의 불투명함,
+            <br />
+            공감에서 시작했습니다.
           </h1>
-          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-left text-[15px] leading-relaxed text-gray-600">
-            <p className="indent-4">
-              정비소마다 천차만별인 가격과 작업 품질, 모르면 바가지이고 알면
-              제값입니다.
+
+          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-[15px] leading-relaxed text-gray-700">
+            <p>
+              정비소에서 견적을 들을 때마다 설명이 애매했고, 부품값이 덤탱이처럼
+              붙는 순간도 반복됐습니다. “대충 그럴 수 있지”라고 넘기면 되겠지만,
+              라이더 입장에서는 납득하기가 어려웠습니다.
             </p>
-            <p className="indent-4">
-              정보가 없을 때 불합리한 선택을 어쩔 수 없다고 여기고 계시진
-              않나요? 같은 거리·같은 작업인데도 체감이 크게 달라질 수 있습니다.
+            <p>
+              정비소마다 들쭉날쭉한 가격 횡포에, 저도 마음 한켠이 계속 걸렸습니다.
+              그래서 이 서비스를 만들었습니다. 지금은 미흡하지만, 더 많은 라이더들이
+              리뷰 하나씩 남겨주면 시간이 흐를수록 데이터가 쌓이고, 결국 모든 정비소가
+              일관되고 적정한 가격을 형성하는 쪽으로 나아갈 수 있다고 믿습니다.
             </p>
-            <p className="indent-4">
-              <span className="font-semibold text-gray-800">배오정리</span>는
-              배달 라이더들이 직접 발로 뛰며 쌓은 정비 경험을 모아, 더 이상
-              아무것도 모른 채 정비소만 찾아 헤매지 않아도 되는 세상을
-              지향합니다.
-            </p>
-            <p className="indent-4">
-              당신이 남기는 리뷰 하나가 오늘도 길 위의 동료 라이더를
-              보호합니다. 지도와 전화로 이어지는 빠른 검색은 기본이고, 우리는
-              그 위에 서로의 기록을 쌓아 갑니다.
-            </p>
-            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 indent-4 text-gray-700">
-              이 서비스는 특정 업체만을 위한 게 아니라, 라이더 모두가 함께
-              다듬어 가는 장(場)입니다. 첫 방문 후기·작업 만족도·팁 하나까지
-              부담 없이 더해 주세요. 여러분의 참여가 곧 서비스의 방향입니다.
+            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-800">
+              아직 완벽하진 않아도 괜찮아요. 당신의 한 줄이 모여, 다음 라이더가
+              같은 불안 대신 “납득할 수 있는 기준”을 갖게 될 거라 믿습니다.
             </p>
           </div>
 
@@ -307,7 +357,7 @@ export default function Home() {
               자주 찾는 검색: 지역+작업(강남 엔진오일), 기종(PCX), 증상(브레이크
               소음), 시간대(심야)
             </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-2.5 sm:gap-3">
+            <div className="mt-5 flex flex-wrap justify-start gap-2.5 sm:gap-3">
               {HERO_QUICK.map((q) => (
                 <button
                   key={q}
@@ -351,7 +401,7 @@ export default function Home() {
                 key={t.key}
                 type="button"
                 onClick={t.onClick}
-                className={`rounded-xl border px-2 py-4 text-center transition sm:px-4 ${
+                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
                   finderTab === t.key
                     ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
                     : "border-gray-100 bg-white hover:border-gray-200"
@@ -380,7 +430,7 @@ export default function Home() {
       {/* 주요 서비스 */}
       <section id="services" className="scroll-mt-20 bg-gray-50/50 py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-12 text-center">
+          <div className="mb-12 text-left">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
               SERVICES
             </p>
@@ -438,7 +488,7 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-center">
+      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-left">
         <div className="mx-auto max-w-2xl px-6">
           <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
             직접 경험한 리뷰를 공유하고
@@ -454,7 +504,7 @@ export default function Home() {
             만약 로그인 동의 화면이 뜨지 않거나 오류가 발생하면, 서버 설정이 갱신 중이거나
             잠시 지연될 수 있습니다. 1~2분 후 다시 시도해 주세요.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-start gap-3">
             <button
               type="button"
               onClick={() => setShowLogin(true)}
@@ -559,7 +609,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <p className="mt-12 border-t border-gray-100 pt-6 text-center text-xs text-gray-400">
+          <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
             © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을

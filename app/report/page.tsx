@@ -45,6 +45,7 @@ export default function ReportPage() {
   const { status } = useSession();
   const isLoggedIn = status === "authenticated";
   const [showLogin, setShowLogin] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [payload, setPayload] = useState<ReportPayload>({
     category: "잘못된 정보",
@@ -63,7 +64,7 @@ export default function ReportPage() {
     <div className="min-h-screen bg-white font-sans">
       {/* 네비게이션 */}
       <nav className="sticky top-0 z-40 border-b border-gray-100 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-3 md:h-16 md:py-0">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#00BFA5]">
@@ -81,7 +82,8 @@ export default function ReportPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Desktop */}
+          <div className="hidden items-center gap-2 md:flex">
             <Link
               href="/policy"
               className="text-sm font-medium text-gray-500 transition-colors hover:text-[#00BFA5]"
@@ -107,13 +109,84 @@ export default function ReportPage() {
               </Button>
             )}
           </div>
+
+          {/* Mobile */}
+          <div className="flex items-center gap-2 md:hidden">
+            {isLoggedIn ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="border-gray-200 bg-white px-3 text-xs font-bold"
+                onClick={() => void signOut({ callbackUrl: "/" })}
+              >
+                로그아웃
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                className="rounded-lg bg-[#00BFA5] px-3 text-xs font-bold text-white hover:bg-[#009E88]"
+                onClick={() => setShowLogin(true)}
+              >
+                로그인
+              </Button>
+            )}
+            <button
+              type="button"
+              aria-label="메뉴 열기"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none">
+                <path
+                  d="M4 7h16M4 12h16M4 17h16"
+                  stroke="#00BFA5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
+
+      {mobileMenuOpen && (
+        <div className="border-t border-gray-100 bg-white md:hidden">
+          <div className="mx-auto max-w-7xl px-6 py-3">
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/policy"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                정책
+              </Link>
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"
+                >
+                  로그아웃
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowLogin(true)}
+                  className="w-full rounded-xl bg-[#00BFA5] px-4 py-3 text-sm font-bold text-white hover:bg-[#009E88]"
+                >
+                  로그인
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
       <main className="mx-auto max-w-3xl px-6 py-14">
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-left">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
             REPORT
           </p>
@@ -127,7 +200,7 @@ export default function ReportPage() {
 
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           {submitted ? (
-            <div className="space-y-4 text-center">
+            <div className="space-y-4 text-left">
               <div className="text-5xl">📨</div>
               <h2 className="text-xl font-black text-gray-900">
                 제보를 메일로 전송할 준비가 됐어요
@@ -380,7 +453,7 @@ export default function ReportPage() {
             </div>
           </div>
 
-          <p className="mt-12 border-t border-gray-100 pt-6 text-center text-xs text-gray-400">
+          <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
             © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.

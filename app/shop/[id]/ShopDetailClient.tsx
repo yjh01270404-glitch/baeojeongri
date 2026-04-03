@@ -28,7 +28,7 @@ function ReviewModal({ shopName, onClose, onSubmit }: { shopName: string; onClos
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
         {done ? (
-          <div className="py-8 text-center">
+          <div className="py-8 text-left">
             <div className="mb-3 text-5xl">🎉</div>
             <p className="text-lg font-black text-gray-900">리뷰가 등록됐어요!</p>
             <p className="mt-1 text-sm text-gray-500">전체 정보가 열립니다.</p>
@@ -89,6 +89,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
     }
   });
   const [showModal, setShowModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleUnlock = () => {
     localStorage.setItem("boj_unlocked", "true");
@@ -116,9 +117,64 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
             </div>
             <span className="text-xl font-black text-[#00BFA5]">배오정리</span>
           </Link>
-          <Link href="/" className="text-sm font-medium text-gray-500 hover:text-[#00BFA5] transition-colors">← 목록으로</Link>
+          <div className="hidden items-center md:flex">
+            <Link
+              href="/"
+              className="text-sm font-medium text-gray-500 hover:text-[#00BFA5] transition-colors"
+            >
+              ← 목록으로
+            </Link>
+          </div>
+          <div className="flex items-center md:hidden">
+            <button
+              type="button"
+              aria-label="메뉴 열기"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none">
+                <path
+                  d="M4 7h16M4 12h16M4 17h16"
+                  stroke="#00BFA5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
+
+      {mobileMenuOpen && (
+        <div className="border-t border-gray-100 bg-white md:hidden">
+          <div className="mx-auto max-w-5xl px-6 py-3">
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                ← 목록으로
+              </Link>
+              <Link
+                href="/policy"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                가입·리뷰·혜택 정책
+              </Link>
+              <Link
+                href="/report"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                제보·신고
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mx-auto max-w-5xl px-6 py-12">
         {/* 헤더 */}
@@ -167,7 +223,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
                     <span className="text-base">📍</span>
                     <span className="text-sm text-gray-500">{shop.city} {shop.district}</span>
                   </div>
-                  <div className="rounded-xl border border-dashed border-[#00BFA5]/40 bg-[#00BFA5]/5 p-4 text-center">
+                  <div className="rounded-xl border border-dashed border-[#00BFA5]/40 bg-[#00BFA5]/5 p-4 text-left">
                     <p className="mb-3 text-xs text-gray-500">주소·전화번호·영업시간은<br />리뷰 작성 후 공개됩니다</p>
                     <button
                       onClick={() => setShowModal(true)}
@@ -272,7 +328,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
                   })}
                 </div>
                 {stats.priceRange && (
-                  <div className="mt-4 rounded-xl bg-gray-50 px-4 py-3 text-center">
+                  <div className="mt-4 rounded-xl bg-gray-50 px-4 py-3 text-left">
                     <p className="text-xs text-gray-400">전체 가격 범위</p>
                     <p className="mt-0.5 text-sm font-black text-gray-700">
                       {formatPrice(stats.priceRange.min)} ~ {formatPrice(stats.priceRange.max)}
@@ -350,7 +406,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
                 })}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+              <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-left">
                 <div className="mb-4 text-5xl">🔒</div>
                 <p className="mb-2 text-lg font-black text-gray-800">리뷰 {stats.reviewCount}개가 잠겨있습니다</p>
                 <p className="mb-6 text-sm text-gray-500">

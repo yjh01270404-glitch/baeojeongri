@@ -1,9 +1,14 @@
 import NextAuth from "next-auth";
 import Naver from "next-auth/providers/naver";
+import Kakao from "next-auth/providers/kakao";
 
 const naverConfigured =
   Boolean(process.env.NAVER_CLIENT_ID) &&
   Boolean(process.env.NAVER_CLIENT_SECRET);
+
+const kakaoConfigured =
+  Boolean(process.env.KAKAO_CLIENT_ID) &&
+  Boolean(process.env.KAKAO_CLIENT_SECRET);
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -12,6 +17,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           Naver({
             clientId: process.env.NAVER_CLIENT_ID,
             clientSecret: process.env.NAVER_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+    ...(kakaoConfigured
+      ? [
+          Kakao({
+            clientId: process.env.KAKAO_CLIENT_ID,
+            clientSecret: process.env.KAKAO_CLIENT_SECRET,
           }),
         ]
       : []),
