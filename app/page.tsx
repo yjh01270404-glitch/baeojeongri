@@ -29,14 +29,6 @@ const NAV_LINKS: NavItem[] = [
   { label: "이용안내", href: "#cta" },
 ];
 
-const HERO_QUICK = [
-  "강남 엔진오일",
-  "야간 정비",
-  "타이어 펑크",
-  "브레이크 소음",
-  "PCX 정비",
-] as const;
-
 const SERVICES = [
   {
     title: "정비소 가격 비교",
@@ -303,51 +295,40 @@ export default function Home() {
       </nav>
 
       {/* 히어로 */}
-      <section className="border-b border-gray-100 bg-white py-20 sm:py-24">
-        <div className="mx-auto max-w-3xl px-6">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00BFA5]/30 bg-[#00BFA5]/8 px-4 py-1.5">
-            <span className="text-xs font-semibold text-[#00BFA5]">
+      <section className="border-b border-[#00B89A] bg-[#00B89A] py-[60px] [word-break:keep-all]">
+        <div className="mx-auto w-full max-w-3xl px-5">
+          <div className="mb-6 flex justify-center">
+            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-xs font-semibold text-white">
               배달라이더 전용 · 카카오맵 실시간 검색
             </span>
           </div>
-          <h1 className="mb-8 text-2xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-5xl">
+          <h1 className="text-left text-[28px] font-bold leading-[1.3] text-white md:text-[40px]">
             정비소마다 가격이 왜 이렇게 다를까요?
-            <br className="hidden md:inline" />
-            라이더가 직접 만든 정비소 비교 플랫폼입니다.
           </h1>
+          <p className="mt-3 text-left text-[18px] font-bold leading-[1.3] text-[#FFFBE6]">
+            라이더가 직접 만든 정비소 비교 플랫폼
+          </p>
 
-          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-[15px] leading-relaxed text-gray-700">
-            <p>
-              견적을 받을 때마다 설명은 애매하고, 부품값은 어느새 훌쩍 올라가 있습니다.
-              <br className="hidden md:inline" />
-              같은 작업인데 정비소마다 가격이 두 배씩 차이 나는 건 라이더라면 누구나 겪어본 일입니다.
-            </p>
-            <p>
-              배오정리는 라이더들이 직접 남긴 실제 정비 금액을 모아, 누구나 사전에 가격을
-              확인하고 합리적인 선택을 할 수 있도록 만들었습니다. 리뷰 하나하나가 쌓일수록
-              데이터는 정확해지고, 정비소들도 자연스럽게 적정 가격을 유지하게 됩니다.
-            </p>
-            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-800">
-              당신의 한 줄이 시작입니다. 다음 라이더의 바가지를 막고, 결국엔 모든 정비소가 정직하게 장사하는 세상으로 이어집니다.
-            </p>
+          <div className="mt-6 text-left text-[14px] leading-[1.8] text-white/90">
+            <p>견적마다 설명은 애매하고, 부품값은 훌쩍 올라가 있습니다.</p>
+            <p>라이더가 직접 남긴 실제 정비 금액으로 합리적인 선택을 하세요.</p>
           </div>
 
-          <div className="mx-auto max-w-2xl">
-            <div className="mt-2 flex flex-wrap justify-start gap-2.5 sm:gap-3">
-              {HERO_QUICK.map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  onClick={() => {
-                    setHeroSearch(q);
-                    setTimeout(scrollToFinder, 100);
-                  }}
-                  className="rounded-full border border-gray-200 bg-gray-50 px-3.5 py-2 text-xs font-semibold text-gray-600 transition hover:border-[#00BFA5] hover:text-[#00BFA5]"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+          <div className="mt-8 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLogin(true)}
+              className="rounded-full bg-white px-6 py-3 text-sm font-bold text-[#00B89A] transition hover:bg-gray-50"
+            >
+              로그인하기
+            </button>
+            <button
+              type="button"
+              onClick={scrollToFinder}
+              className="rounded-full border border-white px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
+            >
+              정비소 찾기
+            </button>
           </div>
 
         </div>
