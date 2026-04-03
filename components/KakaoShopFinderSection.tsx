@@ -536,7 +536,7 @@ export function KakaoShopFinderSection({
                     }
                   }}
                   onClick={() => setDetailPlace(p)}
-                  className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
+                  className="flex cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
                 >
                   <div className="shrink-0">
                     <PlaceCardVisual
@@ -546,18 +546,18 @@ export function KakaoShopFinderSection({
                       streetViewConfig={streetViewConfig}
                     />
                   </div>
-                  <div className="flex flex-1 flex-col p-2 text-left">
-                    <h3 className="line-clamp-2 text-sm font-bold text-gray-900">
+                  <div className="flex flex-1 flex-col p-1.5 text-left md:p-2">
+                    <h3 className="line-clamp-2 text-[11px] font-bold leading-tight text-gray-900 md:text-sm">
                       {p.place_name}
                     </h3>
-                    <p className="mt-1 line-clamp-1 text-xs text-gray-400">
+                    <p className="mt-1 hidden line-clamp-1 text-xs text-gray-400 md:block">
                       {p.category_name}
                     </p>
-                    <p className="mt-1 line-clamp-2 text-xs text-gray-600">
+                    <p className="mt-1 hidden line-clamp-2 text-xs text-gray-600 sm:block">
                       {p.road_address_name || p.address_name}
                     </p>
                     {p.phone ? (
-                      <div className="mt-1.5">
+                      <div className="mt-1.5 hidden sm:block">
                         {isLoggedIn ? (
                           <p className="text-xs font-medium text-gray-800">
                             📞 {p.phone}
@@ -578,29 +578,31 @@ export function KakaoShopFinderSection({
                     ) : null}
                     <div className="mt-auto space-y-1 pt-1.5">
                       {p.distance ? (
-                        <p className="text-xs font-bold text-[#00BFA5]">
+                        <p className="text-[10px] font-bold text-[#00BFA5] md:text-xs">
                           {formatDistance(p.distance)} · 근처
                         </p>
                       ) : null}
                       <div
-                        className="flex flex-wrap gap-2"
+                        className="flex flex-wrap gap-1 md:gap-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <a
                           href={naverMapSearchUrl(p.place_name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[6rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A] px-2 py-1 text-[11px] font-bold text-white transition hover:brightness-95"
+                          className="inline-flex min-w-0 flex-1 items-center justify-center rounded-md border border-[#03C75A] bg-[#03C75A] px-1.5 py-1 text-[10px] font-bold text-white transition hover:brightness-95 md:rounded-lg md:px-2 md:text-[11px]"
                         >
-                          네이버지도
+                          <span className="sm:hidden">네이버</span>
+                          <span className="hidden sm:inline">네이버지도</span>
                         </a>
                         <a
                           href={p.place_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[6rem] flex-1 items-center justify-center rounded-lg border border-[#FEE500] bg-[#FEE500] px-2 py-1 text-[11px] font-bold text-[#3C1E1E] transition hover:brightness-95"
+                          className="inline-flex min-w-0 flex-1 items-center justify-center rounded-md border border-[#FEE500] bg-[#FEE500] px-1.5 py-1 text-[10px] font-bold text-[#3C1E1E] transition hover:brightness-95 md:rounded-lg md:px-2 md:text-[11px]"
                         >
-                          카카오맵
+                          <span className="sm:hidden">카카오</span>
+                          <span className="hidden sm:inline">카카오맵</span>
                         </a>
                       </div>
                     </div>
