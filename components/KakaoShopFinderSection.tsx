@@ -536,7 +536,7 @@ export function KakaoShopFinderSection({
                     }
                   }}
                   onClick={() => setDetailPlace(p)}
-                  className="flex cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
+                  className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
                 >
                   <div className="shrink-0">
                     <PlaceCardVisual
@@ -547,7 +547,7 @@ export function KakaoShopFinderSection({
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-1.5 text-left md:p-2">
-                    <h3 className="line-clamp-2 text-[11px] font-bold leading-tight text-gray-900 md:text-sm">
+                    <h3 className="line-clamp-2 min-h-[2.75rem] text-[11px] font-bold leading-tight text-gray-900 md:text-sm">
                       {p.place_name}
                     </h3>
                     <p className="mt-1 hidden line-clamp-1 text-xs text-gray-400 md:block">
@@ -578,12 +578,16 @@ export function KakaoShopFinderSection({
                     ) : null}
                     <div className="mt-auto space-y-1 pt-1.5">
                       {p.distance ? (
-                        <p className="text-[10px] font-bold text-[#00BFA5] md:text-xs">
+                        <p className="min-h-[0.875rem] text-[10px] font-bold text-[#00BFA5] md:text-xs">
                           {formatDistance(p.distance)} · 근처
                         </p>
-                      ) : null}
+                      ) : (
+                        <p className="min-h-[0.875rem] text-[10px] font-bold text-transparent md:text-xs">
+                          거리정보
+                        </p>
+                      )}
                       <div
-                        className="flex flex-wrap gap-1 md:gap-2"
+                        className="flex min-h-[1.9rem] flex-wrap gap-1 md:min-h-[2.1rem] md:gap-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <a
