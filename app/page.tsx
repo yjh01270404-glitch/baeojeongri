@@ -239,27 +239,27 @@ export default function Home() {
             <br />
             알면 <span className="text-[#00BFA5]">제값.</span>
           </h1>
-          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-[15px] leading-relaxed text-gray-600">
-            <p>
+          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-left text-[15px] leading-relaxed text-gray-600">
+            <p className="indent-4">
               정비소마다 천차만별인 가격과 작업 품질, 모르면 바가지이고 알면
               제값입니다.
             </p>
-            <p>
+            <p className="indent-4">
               정보가 없을 때 불합리한 선택을 어쩔 수 없다고 여기고 계시진
               않나요? 같은 거리·같은 작업인데도 체감이 크게 달라질 수 있습니다.
             </p>
-            <p>
+            <p className="indent-4">
               <span className="font-semibold text-gray-800">배오정리</span>는
               배달 라이더들이 직접 발로 뛰며 쌓은 정비 경험을 모아, 더 이상
               아무것도 모른 채 정비소만 찾아 헤매지 않아도 되는 세상을
               지향합니다.
             </p>
-            <p>
+            <p className="indent-4">
               당신이 남기는 리뷰 하나가 오늘도 길 위의 동료 라이더를
               보호합니다. 지도와 전화로 이어지는 빠른 검색은 기본이고, 우리는
               그 위에 서로의 기록을 쌓아 갑니다.
             </p>
-            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-700">
+            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 indent-4 text-gray-700">
               이 서비스는 특정 업체만을 위한 게 아니라, 라이더 모두가 함께
               다듬어 가는 장(場)입니다. 첫 방문 후기·작업 만족도·팁 하나까지
               부담 없이 더해 주세요. 여러분의 참여가 곧 서비스의 방향입니다.

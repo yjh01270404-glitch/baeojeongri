@@ -455,7 +455,7 @@ export function KakaoShopFinderSection({
         {status === "ready" &&
           filteredPlaces.length > 0 &&
           finderTab !== "map" && (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredPlaces.map((p) => (
                 <article
                   key={p.id}
@@ -478,14 +478,14 @@ export function KakaoShopFinderSection({
                       streetViewConfig={streetViewConfig}
                     />
                   </div>
-                  <div className="flex flex-1 flex-col p-4 text-left">
+                  <div className="flex flex-1 flex-col p-3 text-left">
                     <h3 className="line-clamp-2 text-base font-bold text-gray-900">
                       {p.place_name}
                     </h3>
                     <p className="mt-1 line-clamp-1 text-xs text-gray-400">
                       {p.category_name}
                     </p>
-                    <p className="mt-2 line-clamp-2 text-sm text-gray-600">
+                    <p className="mt-1.5 line-clamp-2 text-sm text-gray-600">
                       {p.road_address_name || p.address_name}
                     </p>
                     {p.phone ? (
@@ -508,7 +508,7 @@ export function KakaoShopFinderSection({
                         )}
                       </div>
                     ) : null}
-                    <div className="mt-auto space-y-2 pt-3">
+                    <div className="mt-auto space-y-1.5 pt-2">
                       {p.distance ? (
                         <p className="text-xs font-bold text-[#00BFA5]">
                           {formatDistance(p.distance)} · 근처
