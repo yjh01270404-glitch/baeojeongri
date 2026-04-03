@@ -333,50 +333,7 @@ export default function Home() {
           </div>
 
           <div className="mx-auto max-w-2xl">
-            <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:flex-row sm:items-stretch">
-              <div className="flex flex-1 items-center gap-3 px-5 py-3 sm:py-0">
-                <svg
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  className="h-5 w-5 shrink-0"
-                >
-                  <path
-                    d="M10 2C6.686 2 4 4.686 4 8C4 12.5 10 18 10 18S16 12.5 16 8C16 4.686 13.314 2 10 2Z"
-                    stroke="#9CA3AF"
-                    strokeWidth="1.5"
-                  />
-                  <circle
-                    cx="10"
-                    cy="8"
-                    r="2.5"
-                    stroke="#9CA3AF"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  value={heroSearch}
-                  onChange={(e) => setHeroSearch(e.target.value)}
-                  placeholder="지역·정비소명·증상"
-                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={scrollToFinder}
-                className="m-2 shrink-0 rounded-xl bg-[#00BFA5] px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-[#009E88] sm:self-center"
-              >
-                검색하기
-              </button>
-            </div>
-            <p className="mt-3 text-xs text-gray-400">
-              예: 송파 타이어, 영등포 야간
-            </p>
-            <p className="text-xs text-gray-400">
-              자주 찾는 검색: 지역+작업(강남 엔진오일), 기종(PCX), 증상(브레이크
-              소음), 시간대(심야)
-            </p>
-            <div className="mt-5 flex flex-wrap justify-start gap-2.5 sm:gap-3">
+            <div className="mt-2 flex flex-wrap justify-start gap-2.5 sm:gap-3">
               {HERO_QUICK.map((q) => (
                 <button
                   key={q}
@@ -398,6 +355,7 @@ export default function Home() {
 
       <KakaoShopFinderSection
         heroFilter={heroSearch}
+        onHeroFilterChange={setHeroSearch}
         isLoggedIn={isLoggedIn}
         onRequestLogin={() => setShowLogin(true)}
         finderTab={finderTab}

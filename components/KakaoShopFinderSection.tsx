@@ -60,6 +60,7 @@ const QUICK_CHIP_QUERIES: Record<QuickChip, string[]> = {
 
 type Props = {
   heroFilter: string;
+  onHeroFilterChange: (value: string) => void;
   isLoggedIn: boolean;
   onRequestLogin: () => void;
   finderTab: FinderTab;
@@ -72,6 +73,7 @@ type Props = {
 
 export function KakaoShopFinderSection({
   heroFilter,
+  onHeroFilterChange,
   isLoggedIn,
   onRequestLogin,
   finderTab,
@@ -360,6 +362,48 @@ export function KakaoShopFinderSection({
             주변 오토바이 정비소
           </h2>
           <p className="mt-3 text-sm text-gray-500">{locLabel}</p>
+
+          <div className="mt-4 max-w-2xl">
+            <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:flex-row sm:items-stretch">
+              <div className="flex flex-1 items-center gap-3 px-5 py-3 sm:py-0">
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5 shrink-0"
+                >
+                  <path
+                    d="M10 2C6.686 2 4 4.686 4 8C4 12.5 10 18 10 18S16 12.5 16 8C16 4.686 13.314 2 10 2Z"
+                    stroke="#9CA3AF"
+                    strokeWidth="1.5"
+                  />
+                  <circle
+                    cx="10"
+                    cy="8"
+                    r="2.5"
+                    stroke="#9CA3AF"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  value={heroFilter}
+                  onChange={(e) => onHeroFilterChange(e.target.value)}
+                  placeholder="지역·정비소명·증상"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={onRealtimeTab}
+                className="m-2 shrink-0 rounded-xl bg-[#00BFA5] px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-[#009E88] sm:self-center"
+              >
+                검색하기
+              </button>
+            </div>
+            <p className="mt-3 text-xs text-gray-400">
+              예: 송파 타이어, 영등포 야간
+            </p>
+          </div>
 
           <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
             {(
