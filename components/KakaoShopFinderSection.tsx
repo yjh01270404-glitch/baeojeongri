@@ -40,24 +40,6 @@ function maskPhone(phone: string) {
   return `${d.slice(0, 3)}-****-${d.slice(-4)}`;
 }
 
-const QUICK_FILTERS = [
-  "엔진오일",
-  "브레이크패드",
-  "구동계",
-  "타이어",
-  "전기·전장",
-] as const;
-
-type QuickChip = (typeof QUICK_FILTERS)[number];
-
-const QUICK_CHIP_QUERIES: Record<QuickChip, string[]> = {
-  엔진오일: ["엔진오일", "오일"],
-  브레이크패드: ["브레이크", "패드"],
-  구동계: ["구동계", "체인", "스프라켓", "스프로켓", "기어"],
-  타이어: ["타이어"],
-  "전기·전장": ["전기", "전장"],
-};
-
 type Props = {
   heroFilter: string;
   onHeroFilterChange: (value: string) => void;
@@ -91,7 +73,6 @@ export function KakaoShopFinderSection({
   const [streetViewConfig, setStreetViewConfig] = useState<boolean | null>(
     null,
   );
-  const [chip, setChip] = useState<QuickChip | "">("");
   const [isApproximateLocation, setIsApproximateLocation] = useState(false);
   const [locationHint, setLocationHint] = useState<string | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -316,10 +297,6 @@ export function KakaoShopFinderSection({
       const blob = normalize(
         `${p.place_name} ${p.category_name} ${p.address_name} ${p.road_address_name}`,
       );
-      if (chip) {
-        const queries = QUICK_CHIP_QUERIES[chip];
-        if (!queries.some((q) => blob.includes(normalize(q)))) return false;
-      }
       if (h && !blob.includes(h)) return false;
       return true;
     });
@@ -332,7 +309,7 @@ export function KakaoShopFinderSection({
     }
 
     return list;
-  }, [places, heroFilter, chip, finderTab]);
+  }, [places, heroFilter, finderTab]);
 
   const tabHint =
     finderTab === "realtime"
@@ -478,34 +455,6 @@ export function KakaoShopFinderSection({
             </p>
           )}
 
-          <p className="mx-auto mt-8 max-w-2xl text-xs leading-relaxed text-gray-400">
-            작업 종류 칩과 상단 검색어를 함께 쓰면 더 빠르게 좁힐 수 있어요.
-          </p>
-          <div className="mt-5 flex flex-wrap justify-start gap-2.5">
-            {QUICK_FILTERS.map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => setChip((prev) => (prev === q ? "" : q))}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                  chip === q
-                    ? "bg-[#00BFA5] text-white"
-                    : "border border-gray-200 bg-white text-gray-600 hover:border-[#00BFA5]"
-                }`}
-              >
-                {q}
-              </button>
-            ))}
-            {(chip || heroFilter) && (
-              <button
-                type="button"
-                onClick={() => setChip("")}
-                className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100"
-              >
-                작업 필터 해제
-              </button>
-            )}
-          </div>
           {status === "error" && (
             <div className="mt-6 space-y-2">
               <p className="text-sm text-red-600">{errorMsg}</p>

@@ -299,7 +299,7 @@ export default function Home() {
         <div className="mx-auto w-full max-w-3xl px-5">
           <div className="mb-6 flex justify-center">
             <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-xs font-semibold text-white">
-              배달라이더 전용 · 카카오맵 실시간 검색
+              배달라이더 전용 · 카카오맵/네이버지도 검색
             </span>
           </div>
           <h1 className="text-left text-[28px] font-bold leading-[1.3] text-white md:text-[40px]">
