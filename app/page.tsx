@@ -1,321 +1,561 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { LoginModal } from "@/components/LoginModal";
+import {
+  KakaoShopFinderSection,
+  type FinderTab,
+} from "@/components/KakaoShopFinderSection";
+import { dispatchRequestNearbyLocation } from "@/lib/boj-events";
 
-const NAV_LINKS = ["정비소 찾기", "내 주변 정비소", "리뷰 작성", "정비소 등록 문의", "이용안내"];
+const SUPPORT_EMAIL = "support@baeojeongri.kr";
+
+type NavItem =
+  | { label: string; href: string }
+  | { label: string; href: string; requestNearbyGps: true };
+
+const NAV_LINKS: NavItem[] = [
+  { label: "정비소 찾기", href: "#shop-finder" },
+  { label: "내 주변 정비소", href: "#shop-finder", requestNearbyGps: true },
+  { label: "자가정비 정보", href: "#services" },
+  {
+    label: "정비소 등록 문의",
+    href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 정비소 등록·제휴 문의")}`,
+  },
+  { label: "이용안내", href: "#cta" },
+];
+
+const HERO_QUICK = [
+  "강남 엔진오일",
+  "야간 정비",
+  "타이어 펑크",
+  "브레이크 소음",
+  "PCX 정비",
+] as const;
 
 const SERVICES = [
   {
     title: "정비소 가격 비교",
     desc: "기종별·작업별 실제 지불 금액을 투명하게 비교합니다.",
-    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#EEF2FF"/><rect x="13" y="20" width="5" height="14" rx="2" fill="#1B3560" fill-opacity="0.15" stroke="#1B3560" stroke-width="1.5"/><rect x="21.5" y="14" width="5" height="20" rx="2" fill="#1B3560" fill-opacity="0.15" stroke="#1B3560" stroke-width="1.5"/><rect x="30" y="26" width="5" height="8" rx="2" fill="#1B3560" fill-opacity="0.15" stroke="#1B3560" stroke-width="1.5"/><circle cx="34" cy="22" r="3.5" fill="#E8603A"/><circle cx="24" cy="10" r="3.5" fill="#E8603A"/><circle cx="14" cy="16" r="3.5" fill="#E8603A"/></svg>`,
+    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><rect x="13" y="20" width="5" height="14" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><rect x="21.5" y="14" width="5" height="20" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><rect x="30" y="26" width="5" height="8" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><circle cx="34" cy="22" r="3.5" fill="#009E88"/><circle cx="24" cy="10" r="3.5" fill="#009E88"/><circle cx="14" cy="16" r="3.5" fill="#009E88"/></svg>`,
   },
   {
     title: "내 주변 정비소 찾기",
     desc: "거리와 만족도 기준으로 가까운 정비소를 찾아보세요.",
-    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#EEF2FF"/><path d="M24 11C18.477 11 14 15.477 14 21C14 28.5 24 39 24 39C24 39 34 28.5 34 21C34 15.477 29.523 11 24 11Z" fill="#1B3560" fill-opacity="0.12" stroke="#1B3560" stroke-width="2"/><circle cx="24" cy="21" r="5" fill="#E8603A"/><circle cx="24" cy="21" r="2.5" fill="white"/></svg>`,
+    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M24 11C18.477 11 14 15.477 14 21C14 28.5 24 39 24 39C24 39 34 28.5 34 21C34 15.477 29.523 11 24 11Z" fill="#00BFA5" fill-opacity="0.12" stroke="#00BFA5" stroke-width="2"/><circle cx="24" cy="21" r="5" fill="#009E88"/><circle cx="24" cy="21" r="2.5" fill="white"/></svg>`,
   },
   {
     title: "익명 리뷰 작성",
     desc: "익명이 보장되니 부담 없이 경험을 공유해주세요.",
-    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#EEF2FF"/><path d="M31 13L35 17L19 33L13 35L15 29L31 13Z" fill="#1B3560" fill-opacity="0.12" stroke="#1B3560" stroke-width="2" stroke-linejoin="round"/><path d="M28 16L32 20" stroke="#E8603A" stroke-width="2.5" stroke-linecap="round"/><path d="M14 34L15 29L19 33L14 34Z" fill="#1B3560"/></svg>`,
+    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M31 13L35 17L19 33L13 35L15 29L31 13Z" fill="#00BFA5" fill-opacity="0.12" stroke="#00BFA5" stroke-width="2" stroke-linejoin="round"/><path d="M28 16L32 20" stroke="#009E88" stroke-width="2.5" stroke-linecap="round"/></svg>`,
   },
   {
-    title: "라이더 커뮤니티",
-    desc: "기종·정비 이슈 정보를 빠르게 교환할 수 있습니다.",
-    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#EEF2FF"/><path d="M22 12C15.373 12 10 16.925 10 23C10 26.3 11.6 29.3 14.2 31.3L12 38L19 35.5C20.1 35.8 21 36 22 36C28.627 36 34 31.075 34 24.5C34 24.2 34 23.8 33.9 23.5" stroke="#1B3560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#1B3560" fill-opacity="0.08"/><circle cx="18" cy="23" r="1.5" fill="#1B3560"/><circle cx="23" cy="23" r="1.5" fill="#1B3560"/><circle cx="28" cy="23" r="1.5" fill="#1B3560"/><circle cx="36" cy="14" r="6" fill="#E8603A"/><path d="M34 14H38M36 12V16" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`,
-  },
-];
-
-const RankBadge = ({ rank }: { rank: number }) => {
-  if (rank === 1) {
-    return (
-      <div className="flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1.5">
-        <svg viewBox="0 0 14 14" className="w-3.5 h-3.5" fill="none">
-          <path d="M7 1L8.5 5H13L9.5 7.5L11 12L7 9.5L3 12L4.5 7.5L1 5H5.5L7 1Z" fill="#92400e"/>
-        </svg>
-        <span className="text-xs font-black text-amber-900">1위</span>
-      </div>
-    );
-  }
-  if (rank === 2) {
-    return (
-      <div className="flex items-center gap-1.5 rounded-full bg-slate-300 px-3 py-1.5">
-        <svg viewBox="0 0 14 14" className="w-3.5 h-3.5" fill="none">
-          <circle cx="7" cy="6" r="5" fill="#64748b"/>
-          <rect x="4.5" y="10" width="5" height="2.5" rx="0.5" fill="#64748b"/>
-          <text x="7" y="8.5" textAnchor="middle" fontSize="5.5" fill="white" fontWeight="bold">2</text>
-        </svg>
-        <span className="text-xs font-black text-slate-600">2위</span>
-      </div>
-    );
-  }
-  return (
-    <div className="flex items-center gap-1.5 rounded-full bg-orange-300 px-3 py-1.5">
-      <svg viewBox="0 0 14 14" className="w-3.5 h-3.5" fill="none">
-        <circle cx="7" cy="6" r="5" fill="#c2410c"/>
-        <rect x="4.5" y="10" width="5" height="2.5" rx="0.5" fill="#c2410c"/>
-        <text x="7" y="8.5" textAnchor="middle" fontSize="5.5" fill="white" fontWeight="bold">3</text>
-      </svg>
-      <span className="text-xs font-black text-orange-900">3위</span>
-    </div>
-  );
-};
-
-const SHOPS = [
-  {
-    rank: 1,
-    name: "강남 라이더 모터스",
-    area: "서울 강남구",
-    tags: ["PCX", "NMAX", "엔진오일"],
-    price: "엔진오일 2.8만원",
-    rating: 4.9,
-    reviews: 128,
-  },
-  {
-    rank: 2,
-    name: "송파 오토케어",
-    area: "서울 송파구",
-    tags: ["전기/전장 특화", "브레이크 패드"],
-    price: "브레이크 패드 4.2만원",
-    rating: 4.8,
-    reviews: 94,
-  },
-  {
-    rank: 3,
-    name: "영등포 바이크프로",
-    area: "서울 영등포구",
-    tags: ["종합정비", "출장 가능"],
-    price: "타이어 교체 3.5만원~",
-    rating: 4.7,
-    reviews: 76,
+    title: "라이더 자가정비 정보공유",
+    desc: "오일 교환·체인 슬랙·에어필터 같은 자가정비 노하우와 주의점을 라이더끼리 나눕니다.",
+    svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M22 12C15.373 12 10 16.925 10 23C10 26.3 11.6 29.3 14.2 31.3L12 38L19 35.5C20.1 35.8 21 36 22 36C28.627 36 34 31.075 34 24.5" stroke="#00BFA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#00BFA5" fill-opacity="0.08"/><circle cx="18" cy="23" r="1.5" fill="#00BFA5"/><circle cx="23" cy="23" r="1.5" fill="#00BFA5"/><circle cx="28" cy="23" r="1.5" fill="#00BFA5"/><circle cx="36" cy="14" r="6" fill="#009E88"/><path d="M34 14H38M36 12V16" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`,
   },
 ];
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [heroSearch, setHeroSearch] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
+  const [finderTab, setFinderTab] = useState<FinderTab>("realtime");
+  const [realtimeTick, setRealtimeTick] = useState(0);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    try {
+      localStorage.removeItem("boj_auth_session_v1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const isLoggedIn = status === "authenticated";
+
+  const scrollToFinder = () => {
+    document.getElementById("shop-finder")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const onRealtimeTab = () => {
+    setFinderTab("realtime");
+    setRealtimeTick((n) => n + 1);
+    setTimeout(scrollToFinder, 80);
+  };
+
+  const onDistanceTab = () => {
+    setFinderTab("distance");
+    setTimeout(scrollToFinder, 80);
+  };
+
+  const onMapTab = () => {
+    setFinderTab("map");
+    setTimeout(scrollToFinder, 80);
+  };
+
+  const onNavClick = (
+    e: ReactMouseEvent<HTMLAnchorElement>,
+    item: NavItem,
+  ) => {
+    if ("requestNearbyGps" in item && item.requestNearbyGps) {
+      e.preventDefault();
+      dispatchRequestNearbyLocation();
+      return;
+    }
+    if (item.href.startsWith("#")) {
+      e.preventDefault();
+      document
+        .getElementById(item.href.slice(1))
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="min-h-screen bg-white font-sans">
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
       {/* 상단 안내바 */}
-      <div className="bg-[#1B3560] py-2 text-center text-xs text-white/70">
-        배달라이더 전용 정비소 정보 플랫폼 ·{" "}
-        <span className="font-semibold text-[#E8603A]">리뷰 1개 작성 시 전체 열람 무료</span>
+      <div className="bg-[#00BFA5] py-2 text-xs text-white/80">
+        <div className="mx-auto max-w-7xl px-6 text-left">
+          배달라이더 전용 정비소 정보 플랫폼 ·{" "}
+          {status === "loading" ? (
+            <span className="font-bold text-white">세션 확인 중…</span>
+          ) : isLoggedIn ? (
+            <span className="font-bold text-white">
+              {session?.user?.name ?? session?.user?.email ?? "회원"}님,
+              환영합니다
+            </span>
+          ) : (
+            <span className="font-bold text-white">
+              로그인 시 정비소 전화번호 전체가 표시됩니다
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 네비게이션 */}
-      <nav className="sticky top-0 z-50 border-b-2 border-[#1B3560] bg-white shadow-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1B3560]">
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+      <nav className="sticky top-0 z-40 border-b border-gray-100 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-3 md:h-16 md:flex-row md:items-center md:justify-between md:gap-6 md:py-0">
+          <div className="flex items-center justify-between gap-3 md:justify-start md:gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFA5]">
+                <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                  <path
+                    d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <div className="text-xl font-black leading-none text-[#00BFA5]">
+                  배오정리
+                </div>
+                <div className="mt-0.5 text-[10px] text-gray-400">
+                  배달 오토바이 정비소 · 실데이터
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-xl font-black text-[#1B3560] leading-tight">배오정리</div>
-              <div className="text-[10px] text-gray-400 leading-tight">배달 오토바이 정비소 리뷰</div>
+            <div className="flex shrink-0 items-center gap-2 md:hidden">
+              {session ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-gray-200 text-xs font-bold"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                >
+                  로그아웃
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  className="rounded-lg bg-[#00BFA5] px-4 font-bold text-white hover:bg-[#009E88]"
+                  onClick={() => setShowLogin(true)}
+                >
+                  로그인
+                </Button>
+              )}
             </div>
           </div>
-          <div className="hidden items-center gap-7 md:flex">
+          <div className="flex flex-wrap items-center justify-start gap-x-3 gap-y-2 border-t border-gray-100 pt-3 md:flex-1 md:border-0 md:pt-0">
             {NAV_LINKS.map((link) => (
-              <a key={link} href="#" className="text-sm font-medium text-gray-600 hover:text-[#1B3560]">
-                {link}
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(e) => onNavClick(e, link)}
+                className="whitespace-nowrap text-xs font-medium text-gray-500 transition-colors hover:text-[#00BFA5] sm:text-sm"
+              >
+                {link.label}
               </a>
             ))}
           </div>
-          <button className="rounded-lg bg-[#E8603A] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#d4522e]">
-            네이버로 시작하기
-          </button>
+          <div className="hidden shrink-0 items-center gap-2 md:flex">
+            {session ? (
+              <>
+                <span className="max-w-[7rem] truncate text-xs text-gray-600">
+                  {session.user?.name ?? session.user?.email ?? ""}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-gray-200 text-xs font-bold sm:text-sm"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                >
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="button"
+                className="rounded-lg bg-[#00BFA5] px-4 font-bold text-white hover:bg-[#009E88]"
+                onClick={() => setShowLogin(true)}
+              >
+                로그인
+              </Button>
+            )}
+          </div>
         </div>
       </nav>
 
-      {/* 히어로 배너 */}
-      <div className="bg-gradient-to-br from-[#0F2040] via-[#1B3560] to-[#2A4A7F] py-24 text-center">
+      {/* 히어로 */}
+      <section className="border-b border-gray-100 bg-white py-20 text-left sm:py-24">
         <div className="mx-auto max-w-3xl px-6">
-          <div className="mb-5 inline-block rounded-full border border-[#E8603A]/40 bg-[#E8603A]/20 px-4 py-1.5 text-xs font-semibold text-[#E8603A]">
-            배달라이더 전용 정비소 비교 플랫폼
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00BFA5]/30 bg-[#00BFA5]/8 px-4 py-1.5">
+            <span className="text-xs font-semibold text-[#00BFA5]">
+              배달라이더 전용 · 카카오맵 실시간 검색
+            </span>
           </div>
-          <h1 className="mb-6 text-4xl font-black leading-tight text-white md:text-5xl">
-            모르면 바가지, 알면 제값.
+          <h1 className="mb-8 text-4xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-5xl">
+            모르면 바가지,
             <br />
-            <span className="text-[#E8603A]">정비소 비교</span>는 배오정리
+            알면 <span className="text-[#00BFA5]">제값.</span>
           </h1>
-          <p className="mb-10 text-sm leading-loose text-white/60">
-            정비소마다 제각각인 가격, 모르면 바가지고 알면 제값입니다.<br />
-            정보가 없어 불합리한 걸 당연하게 받아들이고 있진 않으신가요?<br /><br />
-            배오정리는 배달라이더들이 직접 발로 뛰며 경험한 정비 정보를 모아,<br />
-            더 이상 아무것도 모른 채 정비소를 찾아 헤매지 않아도 되는 세상을 만듭니다.<br /><br />
-            <span className="font-semibold text-white/90">당신의 리뷰 하나가, 오늘도 달리는 동료 라이더를 지킵니다.</span>
-          </p>
+          <div className="mx-auto mb-10 max-w-2xl space-y-5 text-[15px] leading-relaxed text-gray-600">
+            <p>
+              정비소마다 천차만별인 가격과 작업 품질, 모르면 바가지이고 알면
+              제값입니다.
+            </p>
+            <p>
+              정보가 없을 때 불합리한 선택을 어쩔 수 없다고 여기고 계시진
+              않나요? 같은 거리·같은 작업인데도 체감이 크게 달라질 수 있습니다.
+            </p>
+            <p>
+              <span className="font-semibold text-gray-800">배오정리</span>는
+              배달 라이더들이 직접 발로 뛰며 쌓은 정비 경험을 모아, 더 이상
+              아무것도 모른 채 정비소만 찾아 헤매지 않아도 되는 세상을
+              지향합니다.
+            </p>
+            <p>
+              당신이 남기는 리뷰 하나가 오늘도 길 위의 동료 라이더를
+              보호합니다. 지도와 전화로 이어지는 빠른 검색은 기본이고, 우리는
+              그 위에 서로의 기록을 쌓아 갑니다.
+            </p>
+            <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-700">
+              이 서비스는 특정 업체만을 위한 게 아니라, 라이더 모두가 함께
+              다듬어 가는 장(場)입니다. 첫 방문 후기·작업 만족도·팁 하나까지
+              부담 없이 더해 주세요. 여러분의 참여가 곧 서비스의 방향입니다.
+            </p>
+          </div>
 
-          {/* 검색창 - 위치 기반 */}
-          <div className="mx-auto max-w-xl">
-            <div className="flex overflow-hidden rounded-xl bg-white shadow-xl">
-              <div className="flex flex-1 items-center gap-2 px-5">
-                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-gray-400 flex-shrink-0">
-                  <path d="M10 2C6.686 2 4 4.686 4 8C4 12.5 10 18 10 18C10 18 16 12.5 16 8C16 4.686 13.314 2 10 2Z" stroke="#9CA3AF" strokeWidth="1.5"/>
-                  <circle cx="10" cy="8" r="2.5" stroke="#9CA3AF" strokeWidth="1.5"/>
+          <div className="mx-auto max-w-2xl">
+            <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:flex-row sm:items-stretch">
+              <div className="flex flex-1 items-center gap-3 px-5 py-3 sm:py-0">
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5 shrink-0"
+                >
+                  <path
+                    d="M10 2C6.686 2 4 4.686 4 8C4 12.5 10 18 10 18S16 12.5 16 8C16 4.686 13.314 2 10 2Z"
+                    stroke="#9CA3AF"
+                    strokeWidth="1.5"
+                  />
+                  <circle
+                    cx="10"
+                    cy="8"
+                    r="2.5"
+                    stroke="#9CA3AF"
+                    strokeWidth="1.5"
+                  />
                 </svg>
                 <input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="내 위치 기반으로 정비소 찾기"
-                  className="flex-1 py-4 text-sm text-gray-700 outline-none bg-transparent"
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  placeholder="지역·정비소명·증상 (예: 송파 타이어, 영등포 야간)"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400"
                 />
               </div>
-              <button className="bg-[#E8603A] px-8 py-4 text-sm font-bold text-white hover:bg-[#d4522e] whitespace-nowrap">
-                검색
+              <button
+                type="button"
+                onClick={scrollToFinder}
+                className="m-2 shrink-0 rounded-xl bg-[#00BFA5] px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-[#009E88] sm:self-center"
+              >
+                검색하기
               </button>
             </div>
-            <p className="mt-2 text-xs text-white/30">또는 지역명, 정비소명, 작업종류로 검색하세요</p>
-          </div>
-
-          {/* 통계 */}
-          <div className="mt-12 flex justify-center gap-12 border-t border-white/10 pt-10">
-            {[["1,248", "등록된 정비소"], ["4,821", "라이더 리뷰"], ["98%", "실방문 후기"]].map(([num, label]) => (
-              <div key={label}>
-                <div className="text-3xl font-black text-white">{num}</div>
-                <div className="mt-1 text-xs text-white/40">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 주요 서비스 */}
-      <div className="py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-10">
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#E8603A]">SERVICES</p>
-            <h2 className="text-3xl font-black text-gray-900">주요 서비스</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {SERVICES.map((s) => (
-              <div key={s.title} className="cursor-pointer rounded-xl border border-gray-200 bg-white p-6 transition hover:border-[#1B3560] hover:shadow-lg">
-                <div className="mb-4 w-12 h-12" dangerouslySetInnerHTML={{ __html: s.svg }} />
-                <h3 className="mb-2 text-base font-bold text-gray-900">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-500">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 정비소 목록 */}
-      <div className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#E8603A]">LIST</p>
-              <h2 className="text-3xl font-black text-gray-900">정비소 목록</h2>
-              <p className="mt-1 text-sm text-gray-500">선택한 조건에 맞는 정비소를 확인하세요.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {[["지역", "서울"], ["작업", "전체"], ["기종", "125cc 이하"], ["정렬", "가까운 순"]].map(([label, val]) => (
-                <select key={label} className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 outline-none">
-                  <option>{val}</option>
-                </select>
+            <p className="mt-3 text-left text-xs text-gray-400">
+              자주 찾는 검색: 지역+작업(강남 엔진오일), 기종(PCX), 증상(브레이크
+              소음), 시간대(심야)
+            </p>
+            <div className="mt-5 flex flex-wrap justify-start gap-2.5 sm:gap-3">
+              {HERO_QUICK.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => {
+                    setHeroSearch(q);
+                    setTimeout(scrollToFinder, 100);
+                  }}
+                  className="rounded-full border border-gray-200 bg-gray-50 px-3.5 py-2 text-xs font-semibold text-gray-600 transition hover:border-[#00BFA5] hover:text-[#00BFA5]"
+                >
+                  {q}
+                </button>
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {SHOPS.map((shop) => (
-              <div key={shop.name} className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-[#1B3560] hover:shadow-lg">
-                <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-                  <div>
-                    <h3 className="text-base font-bold text-gray-900">{shop.name}</h3>
-                    <p className="mt-0.5 text-xs text-gray-400">{shop.area}</p>
-                  </div>
-                  <RankBadge rank={shop.rank} />
+
+          <div className="mx-auto mt-12 grid max-w-xl grid-cols-3 gap-2 border-t border-gray-100 pt-10 sm:gap-3">
+            {(
+              [
+                {
+                  key: "realtime" as const,
+                  title: "실시간",
+                  sub: "카카오 재검색",
+                  onClick: onRealtimeTab,
+                },
+                {
+                  key: "distance" as const,
+                  title: "거리순",
+                  sub: "가까운 순 정렬",
+                  onClick: onDistanceTab,
+                },
+                {
+                  key: "map" as const,
+                  title: "지도",
+                  sub: "전체 지도 뷰",
+                  onClick: onMapTab,
+                },
+              ] as const
+            ).map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={t.onClick}
+                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
+                  finderTab === t.key
+                    ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
+                    : "border-gray-100 bg-white hover:border-gray-200"
+                }`}
+              >
+                <div className="text-lg font-black tracking-tight text-gray-900 sm:text-xl">
+                  {t.title}
                 </div>
-                <div className="px-5 py-4">
-                  <div className="mb-3 flex flex-wrap gap-1.5">
-                    {shop.tags.map((tag) => (
-                      <span key={tag} className="rounded-md bg-[#EEF2FF] px-2.5 py-1 text-xs font-medium text-[#1B3560]">{tag}</span>
-                    ))}
-                  </div>
-                  <p className="mb-3 text-sm font-semibold text-[#E8603A]">{shop.price}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-bold text-gray-900">★ {shop.rating}</span>
-                      <span className="text-xs text-gray-400">리뷰 {shop.reviews}</span>
-                    </div>
-                    <button className="rounded-lg border border-[#1B3560] px-4 py-1.5 text-xs font-bold text-[#1B3560] transition hover:bg-[#1B3560] hover:text-white">
-                      상세 보기
-                    </button>
-                  </div>
+                <div className="mt-1 text-[11px] leading-snug text-gray-400 sm:text-xs">
+                  {t.sub}
                 </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <KakaoShopFinderSection
+        heroFilter={heroSearch}
+        isLoggedIn={isLoggedIn}
+        onRequestLogin={() => setShowLogin(true)}
+        finderTab={finderTab}
+        realtimeTick={realtimeTick}
+      />
+
+      {/* 주요 서비스 */}
+      <section id="services" className="scroll-mt-20 bg-gray-50/50 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-12 text-left">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00BFA5]">
+              SERVICES
+            </p>
+            <h2 className="text-3xl font-black text-gray-900">주요 서비스</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map((s) => (
+              <div
+                key={s.title}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    (e.currentTarget as HTMLDivElement).click();
+                  }
+                }}
+                onClick={() => {
+                  if (s.title.includes("내 주변")) {
+                    dispatchRequestNearbyLocation();
+                    return;
+                  }
+                  if (s.title.includes("가격")) {
+                    scrollToFinder();
+                    return;
+                  }
+                  if (s.title.includes("리뷰")) {
+                    document.getElementById("cta")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                    return;
+                  }
+                  document.getElementById("services")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+                className="group cursor-pointer rounded-xl border border-gray-200 bg-white p-7 transition-all hover:border-[#00BFA5]"
+              >
+                <div
+                  className="mb-5 h-12 w-12"
+                  dangerouslySetInnerHTML={{ __html: s.svg }}
+                />
+                <h3 className="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-[#00BFA5]">
+                  {s.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-500">
+                  {s.desc}
+                </p>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA */}
-      <div className="bg-[#1B3560] py-20 text-center">
+      <section id="cta" className="scroll-mt-20 bg-[#00BFA5] py-24 text-left">
         <div className="mx-auto max-w-2xl px-6">
-          <h2 className="mb-4 text-3xl font-black text-white">받은 만큼, 쓴 만큼 남기는 리뷰</h2>
-          <p className="mb-8 text-sm leading-relaxed text-white/50">
-            짧은 리뷰 하나로 전체 정비소·가격 정보 열람이 무료로 열립니다.<br />
-            동료 라이더를 위해 경험을 공유해 주세요.
+          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+            로그인하고
+            <br />
+            전화번호까지 한 번에
+          </h2>
+          <p className="mb-10 text-sm leading-relaxed text-white/70">
+            네이버 계정으로 로그인하면 정비소 연락처가 풀립니다. 카카오·Google
+            로그인은 UI만 열어 두었으며 OAuth는 곧 연결할 예정입니다.
           </p>
-          <div className="flex justify-center gap-4">
-            <button className="rounded-xl bg-[#E8603A] px-8 py-3.5 text-sm font-bold text-white hover:bg-[#d4522e]">리뷰 작성하기</button>
-            <button className="rounded-xl border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-bold text-white hover:bg-white/20">이용 안내 보기</button>
+          <div className="flex flex-wrap justify-start gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLogin(true)}
+              className="rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-[#00BFA5] transition-colors hover:bg-gray-50"
+            >
+              로그인하기
+            </button>
+            <button
+              type="button"
+              onClick={scrollToFinder}
+              className="rounded-xl border border-white/40 px-8 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
+            >
+              정비소 찾기
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* 푸터 */}
-      <footer className="border-t border-gray-200 bg-gray-50 py-12">
+      <footer id="footer" className="scroll-mt-20 border-t border-gray-100 bg-white py-14">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col gap-8 md:flex-row md:justify-between">
             <div>
-              <div className="flex items-center gap-2 text-xl font-black text-[#1B3560]">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1B3560]">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <div className="mb-4 flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#00BFA5]">
+                  <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                    <path
+                      d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
+                </div>
+                <span className="text-xl font-black text-[#00BFA5]">
+                  배오정리
                 </span>
-                배오정리
               </div>
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-gray-500">
-                배달라이더 전용 오토바이 정비소 리뷰·비교 서비스.<br />
+              <p className="max-w-xs text-sm leading-relaxed text-gray-500">
+                배달라이더 전용 오토바이 정비소 검색·비교 서비스.
+                <br />
                 정보의 사전 확인으로 불필요한 지출을 줄이세요.
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-8">
-              <div>
-                <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">서비스</p>
-                <ul className="space-y-2">
-                  {["정비소 찾기", "리뷰", "제휴·등록"].map((item) => (
-                    <li key={item}><a href="#" className="text-sm text-gray-500 hover:text-[#E8603A]">{item}</a></li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">고객센터</p>
-                <ul className="space-y-2">
-                  {["이용안내", "문의하기"].map((item) => (
-                    <li key={item}><a href="#" className="text-sm text-gray-500 hover:text-[#E8603A]">{item}</a></li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">법적 고지</p>
-                <ul className="space-y-2">
-                  {["개인정보처리방침", "서비스 이용약관"].map((item) => (
-                    <li key={item}><a href="#" className="text-sm text-gray-500 hover:text-[#E8603A]">{item}</a></li>
-                  ))}
-                </ul>
-              </div>
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
+              {[
+                {
+                  title: "서비스",
+                  links: [
+                    { label: "정비소 찾기", href: "/#shop-finder" },
+                    { label: "자가정비 정보", href: "/#services" },
+                    {
+                      label: "제휴·등록",
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 제휴·정비소 등록")}`,
+                    },
+                  ],
+                },
+                {
+                  title: "고객센터",
+                  links: [
+                    { label: "이용안내", href: "/#cta" },
+                    {
+                      label: "문의하기",
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 문의")}`,
+                    },
+                  ],
+                },
+                {
+                  title: "법적 고지",
+                  links: [
+                    {
+                      label: "개인정보처리방침",
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("개인정보처리방침 문서 요청")}`,
+                    },
+                    {
+                      label: "서비스 이용약관",
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("이용약관 문서 요청")}`,
+                    },
+                  ],
+                },
+              ].map((col) => (
+                <div key={col.title}>
+                  <p className="mb-4 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                    {col.title}
+                  </p>
+                  <ul className="space-y-2.5">
+                    {col.links.map((item) => (
+                      <li key={item.label}>
+                        <a
+                          href={item.href}
+                          className="text-sm text-gray-500 transition-colors hover:text-[#00BFA5]"
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
-          <p className="mt-10 border-t border-gray-100 pt-6 text-center text-xs text-gray-400">
-            © {new Date().getFullYear()} 배오정리. All rights reserved.
+          <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
+            © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
+            <span className="text-gray-300">
+              이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을
+              수 있습니다.
+            </span>
           </p>
         </div>
       </footer>

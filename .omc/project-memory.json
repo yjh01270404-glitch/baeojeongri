@@ -1,0 +1,251 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775182381833,
+  "projectRoot": "C:\\Users\\yjh01\\OneDrive\\Desktop\\oz-4\\baeojeongri",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.2.2",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.4",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase",
+    "importStyle": "ES modules",
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "app",
+      "components",
+      "lib",
+      "public"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "app": {
+      "path": "app",
+      "purpose": "Application code",
+      "fileCount": 6,
+      "lastAccessed": 1775182381756,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx",
+        "not-found.tsx",
+        "page.tsx"
+      ]
+    },
+    "components": {
+      "path": "components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1775182381757,
+      "keyFiles": []
+    },
+    "lib": {
+      "path": "lib",
+      "purpose": "Library code",
+      "fileCount": 5,
+      "lastAccessed": 1775182381773,
+      "keyFiles": [
+        "data.ts",
+        "region-options.ts",
+        "shop-utils.ts",
+        "types.ts",
+        "utils.ts"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 5,
+      "lastAccessed": 1775182381774,
+      "keyFiles": [
+        "file.svg",
+        "globe.svg",
+        "next.svg",
+        "vercel.svg",
+        "window.svg"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "app\\page.tsx",
+      "accessCount": 40,
+      "lastAccessed": 1775184664194,
+      "type": "file"
+    },
+    {
+      "path": "app\\shop\\[id]\\ShopDetailClient.tsx",
+      "accessCount": 23,
+      "lastAccessed": 1775183555900,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 11,
+      "lastAccessed": 1775183568000,
+      "type": "directory"
+    },
+    {
+      "path": "lib\\shop-utils.ts",
+      "accessCount": 5,
+      "lastAccessed": 1775183536770,
+      "type": "file"
+    },
+    {
+      "path": "app\\layout.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1775183532221,
+      "type": "file"
+    },
+    {
+      "path": "app\\not-found.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1775183536001,
+      "type": "file"
+    },
+    {
+      "path": "app\\globals.css",
+      "accessCount": 4,
+      "lastAccessed": 1775183571993,
+      "type": "file"
+    },
+    {
+      "path": "components\\ui\\card.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775183533562,
+      "type": "file"
+    },
+    {
+      "path": "lib\\types.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775183537216,
+      "type": "file"
+    },
+    {
+      "path": "lib\\data.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775183537403,
+      "type": "file"
+    },
+    {
+      "path": "app\\shop\\[id]\\page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775183554586,
+      "type": "file"
+    },
+    {
+      "path": "app",
+      "accessCount": 3,
+      "lastAccessed": 1775183565347,
+      "type": "directory"
+    },
+    {
+      "path": "components\\ui\\button.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775182804918,
+      "type": "file"
+    },
+    {
+      "path": "components\\ui\\input.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775183534102,
+      "type": "file"
+    },
+    {
+      "path": "components\\ui\\select.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775183534457,
+      "type": "file"
+    },
+    {
+      "path": "lib\\region-options.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775183536938,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 2,
+      "lastAccessed": 1775183580367,
+      "type": "file"
+    },
+    {
+      "path": "lib\\utils.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775182745137,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775182748522,
+      "type": "file"
+    },
+    {
+      "path": "lib",
+      "accessCount": 1,
+      "lastAccessed": 1775183454457,
+      "type": "directory"
+    },
+    {
+      "path": "app\\sitemap.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775183543959,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

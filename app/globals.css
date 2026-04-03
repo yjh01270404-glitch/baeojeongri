@@ -53,7 +53,7 @@ body {
 }
 
 ::selection {
-  background: rgba(27, 53, 96, 0.14);
+  background: rgba(0, 191, 165, 0.14);
   color: inherit;
 }
 

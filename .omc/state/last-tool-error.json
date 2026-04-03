@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"ls \\\"C:\\\\Users\\\\yjh01\\\\OneDrive\\\\Desktop\\\\oz-4\\\\baeojeongri\\\\node_modules\\\\next\\\\dist\\\\docs\\\\\\\" 2>/dev/null | head -20\",\"description\":\"Check Next.js 16 docs directory\"}",
+  "error": "Exit code 2\n/usr/bin/bash: eval: line 1: unexpected EOF while looking for matching `\"'",
+  "timestamp": "2026-04-03T03:09:29.661Z",
+  "retry_count": 1
+}
