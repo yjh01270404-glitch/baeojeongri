@@ -20,7 +20,7 @@ const NAV_LINKS: NavItem[] = [
   { label: "정비소 찾기", href: "#shop-finder" },
   { label: "내 주변 정비소", href: "#shop-finder", requestNearbyGps: true },
   { label: "자가정비 정보", href: "#services" },
-  { label: "가입·리뷰·혜택 정책", href: "/policy" },
+  { label: "정책 사항", href: "/policy" },
   { label: "제보·신고", href: "/report" },
   {
     label: "정비소 등록 문의",
@@ -32,22 +32,18 @@ const NAV_LINKS: NavItem[] = [
 const SERVICES = [
   {
     title: "정비소 가격 비교",
-    desc: "기종별·작업별 실제 지불 금액을 투명하게 비교합니다.",
     svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><rect x="13" y="20" width="5" height="14" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><rect x="21.5" y="14" width="5" height="20" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><rect x="30" y="26" width="5" height="8" rx="2" fill="#00BFA5" fill-opacity="0.15" stroke="#00BFA5" stroke-width="1.5"/><circle cx="34" cy="22" r="3.5" fill="#009E88"/><circle cx="24" cy="10" r="3.5" fill="#009E88"/><circle cx="14" cy="16" r="3.5" fill="#009E88"/></svg>`,
   },
   {
     title: "내 주변 정비소 찾기",
-    desc: "거리와 만족도 기준으로 가까운 정비소를 찾아보세요.",
     svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M24 11C18.477 11 14 15.477 14 21C14 28.5 24 39 24 39C24 39 34 28.5 34 21C34 15.477 29.523 11 24 11Z" fill="#00BFA5" fill-opacity="0.12" stroke="#00BFA5" stroke-width="2"/><circle cx="24" cy="21" r="5" fill="#009E88"/><circle cx="24" cy="21" r="2.5" fill="white"/></svg>`,
   },
   {
     title: "익명 리뷰 작성",
-    desc: "익명이 보장되니 부담 없이 경험을 공유해주세요.",
     svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M31 13L35 17L19 33L13 35L15 29L31 13Z" fill="#00BFA5" fill-opacity="0.12" stroke="#00BFA5" stroke-width="2" stroke-linejoin="round"/><path d="M28 16L32 20" stroke="#009E88" stroke-width="2.5" stroke-linecap="round"/></svg>`,
   },
   {
     title: "라이더 자가정비 정보공유",
-    desc: "오일 교환·체인 슬랙·에어필터 같은 자가정비 노하우와 주의점을 라이더끼리 나눕니다.",
     svg: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="12" fill="#E6F9F7"/><path d="M22 12C15.373 12 10 16.925 10 23C10 26.3 11.6 29.3 14.2 31.3L12 38L19 35.5C20.1 35.8 21 36 22 36C28.627 36 34 31.075 34 24.5" stroke="#00BFA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#00BFA5" fill-opacity="0.08"/><circle cx="18" cy="23" r="1.5" fill="#00BFA5"/><circle cx="23" cy="23" r="1.5" fill="#00BFA5"/><circle cx="28" cy="23" r="1.5" fill="#00BFA5"/><circle cx="36" cy="14" r="6" fill="#009E88"/><path d="M34 14H38M36 12V16" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`,
   },
 ];
@@ -355,7 +351,7 @@ export default function Home() {
             </p>
             <h2 className="text-3xl font-black text-gray-900">주요 서비스</h2>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {SERVICES.map((s) => (
               <div
                 key={s.title}
@@ -388,18 +384,15 @@ export default function Home() {
                     block: "start",
                   });
                 }}
-                className="group cursor-pointer rounded-xl border border-gray-200 bg-white p-7 transition-all hover:border-[#00BFA5]"
+                className="group cursor-pointer rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-[#00BFA5]"
               >
                 <div
-                  className="mb-5 h-12 w-12"
+                  className="mb-3 h-11 w-11"
                   dangerouslySetInnerHTML={{ __html: s.svg }}
                 />
-                <h3 className="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-[#00BFA5]">
+                <h3 className="text-base font-bold text-gray-900 transition-colors group-hover:text-[#00BFA5]">
                   {s.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-gray-500">
-                  {s.desc}
-                </p>
               </div>
             ))}
           </div>
@@ -459,7 +452,7 @@ export default function Home() {
                   title: "고객센터",
                   links: [
                     { label: "이용안내", href: "/#cta" },
-                    { label: "가입·리뷰·혜택 정책", href: "/policy" },
+                    { label: "정책 사항", href: "/policy" },
                     { label: "제보·신고", href: "/report" },
                     {
                       label: "문의하기",

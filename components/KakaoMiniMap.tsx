@@ -24,8 +24,8 @@ export function KakaoMiniMap({ lat, lng }: Props) {
     const map = new kakao.maps.Map(el, {
       center: position,
       level: 4,
-      scrollwheel: false,
-      draggable: false,
+      scrollwheel: true,
+      draggable: true,
     });
     const marker = new kakao.maps.Marker({ position });
     marker.setMap(map);
@@ -60,7 +60,7 @@ export function KakaoMiniMap({ lat, lng }: Props) {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 h-full w-full bg-gray-200 pointer-events-none"
+      className="absolute inset-0 h-full w-full bg-gray-200"
       role="presentation"
     />
   );

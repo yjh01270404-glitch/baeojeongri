@@ -182,7 +182,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
                 onClick={() => setMobileMenuOpen(false)}
                 className="rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                가입·리뷰·혜택 정책
+                정책 사항
               </Link>
               <Link
                 href="/report"

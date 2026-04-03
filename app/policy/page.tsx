@@ -158,7 +158,7 @@ export default function PolicyPage() {
             POLICY
           </p>
           <h1 className="text-3xl font-black text-gray-900 sm:text-4xl">
-            가입·리뷰·혜택 정책
+            정책 사항
           </h1>
           <p className="mt-3 text-sm text-gray-500">{memberStatusLine}</p>
         </div>

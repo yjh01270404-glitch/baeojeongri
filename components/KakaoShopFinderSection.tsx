@@ -72,6 +72,7 @@ export function KakaoShopFinderSection({
   onDistanceTab,
   onMapTab,
 }: Props) {
+  const PAGE_SIZE = 18;
   const [status, setStatus] = useState<
     "idle" | "loading" | "ready" | "error"
   >("idle");
@@ -90,6 +91,7 @@ export function KakaoShopFinderSection({
   });
   const [detailPlace, setDetailPlace] = useState<KakaoPlaceItem | null>(null);
   const [kakaoSdkReady, setKakaoSdkReady] = useState(false);
+  const [page, setPage] = useState(1);
 
   const lastCenterRef = useRef<{ lat: number; lng: number } | null>(null);
 
@@ -321,12 +323,15 @@ export function KakaoShopFinderSection({
     return list;
   }, [places, heroFilter, finderTab]);
 
-  const tabHint =
-    finderTab === "realtime"
-      ? "실시간: 카카오 장소 API를 다시 불러옵니다."
-      : finderTab === "distance"
-        ? "거리순: 현재 목록을 거리 가까운 순으로 정렬합니다."
-        : "지도: 검색된 정비소를 한 화면 지도에서 봅니다. 마커를 누르면 상세가 열립니다.";
+  const totalPages = Math.max(1, Math.ceil(filteredPlaces.length / PAGE_SIZE));
+  const pagedPlaces = filteredPlaces.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE,
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [heroFilter, finderTab, places.length]);
 
   return (
     <section
@@ -435,8 +440,6 @@ export function KakaoShopFinderSection({
             ))}
           </div>
 
-          <p className="mt-2 text-xs leading-relaxed text-gray-400">{tabHint}</p>
-
           {isApproximateLocation && (
             <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-[#00BFA5]/25 bg-white px-5 py-5 text-left shadow-sm">
               <p className="text-sm font-bold text-gray-900">
@@ -519,8 +522,9 @@ export function KakaoShopFinderSection({
         {status === "ready" &&
           filteredPlaces.length > 0 &&
           finderTab !== "map" && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredPlaces.map((p) => (
+            <>
+              <div className="grid grid-cols-3 gap-2.5 md:grid-cols-4 xl:grid-cols-5">
+                {pagedPlaces.map((p) => (
                 <article
                   key={p.id}
                   role="button"
@@ -542,20 +546,20 @@ export function KakaoShopFinderSection({
                       streetViewConfig={streetViewConfig}
                     />
                   </div>
-                  <div className="flex flex-1 flex-col p-3 text-left">
-                    <h3 className="line-clamp-2 text-base font-bold text-gray-900">
+                  <div className="flex flex-1 flex-col p-2 text-left">
+                    <h3 className="line-clamp-2 text-sm font-bold text-gray-900">
                       {p.place_name}
                     </h3>
                     <p className="mt-1 line-clamp-1 text-xs text-gray-400">
                       {p.category_name}
                     </p>
-                    <p className="mt-1.5 line-clamp-2 text-sm text-gray-600">
+                    <p className="mt-1 line-clamp-2 text-xs text-gray-600">
                       {p.road_address_name || p.address_name}
                     </p>
                     {p.phone ? (
-                      <div className="mt-2">
+                      <div className="mt-1.5">
                         {isLoggedIn ? (
-                          <p className="text-sm font-medium text-gray-800">
+                          <p className="text-xs font-medium text-gray-800">
                             📞 {p.phone}
                           </p>
                         ) : (
@@ -565,14 +569,14 @@ export function KakaoShopFinderSection({
                               e.stopPropagation();
                               onRequestLogin();
                             }}
-                            className="text-left text-sm font-medium text-[#00BFA5] underline-offset-2 hover:underline"
+                            className="text-left text-xs font-medium text-[#00BFA5] underline-offset-2 hover:underline"
                           >
                             📞 {maskPhone(p.phone)} — 로그인하고 전화번호 보기
                           </button>
                         )}
                       </div>
                     ) : null}
-                    <div className="mt-auto space-y-1.5 pt-2">
+                    <div className="mt-auto space-y-1 pt-1.5">
                       {p.distance ? (
                         <p className="text-xs font-bold text-[#00BFA5]">
                           {formatDistance(p.distance)} · 근처
@@ -586,7 +590,7 @@ export function KakaoShopFinderSection({
                           href={naverMapSearchUrl(p.place_name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A] px-3 py-1.5 text-xs font-bold text-white transition hover:brightness-95"
+                          className="inline-flex min-w-[6rem] flex-1 items-center justify-center rounded-lg border border-[#03C75A] bg-[#03C75A] px-2 py-1 text-[11px] font-bold text-white transition hover:brightness-95"
                         >
                           네이버지도
                         </a>
@@ -594,7 +598,7 @@ export function KakaoShopFinderSection({
                           href={p.place_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-w-[8rem] flex-1 items-center justify-center rounded-lg border border-[#FEE500] bg-[#FEE500] px-3 py-1.5 text-xs font-bold text-[#3C1E1E] transition hover:brightness-95"
+                          className="inline-flex min-w-[6rem] flex-1 items-center justify-center rounded-lg border border-[#FEE500] bg-[#FEE500] px-2 py-1 text-[11px] font-bold text-[#3C1E1E] transition hover:brightness-95"
                         >
                           카카오맵
                         </a>
@@ -602,12 +606,36 @@ export function KakaoShopFinderSection({
                     </div>
                   </div>
                 </article>
-              ))}
-            </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="mt-5 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    disabled={page === 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    이전
+                  </button>
+                  <span className="text-xs font-medium text-gray-500">
+                    {page} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={page === totalPages}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    다음 페이지
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
         <p className="mt-10 text-left text-[11px] leading-relaxed text-gray-400">
-          장소 데이터 © Kakao · 미로그인 시 전화번호는 일부만 표시됩니다.
+          로그인 시 상세내용 확인 가능합니다.
         </p>
       </div>
     </section>
