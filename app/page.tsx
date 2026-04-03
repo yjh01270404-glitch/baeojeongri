@@ -308,11 +308,7 @@ export default function Home() {
               데이터는 정확해지고, 정비소들도 자연스럽게 적정 가격을 유지하게 됩니다.
             </p>
             <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-800">
-              당신의 한 줄이 시작입니다.
-              <br />
-              다음 라이더의 바가지를 막고,
-              <br />
-              결국엔 모든 정비소가 정직하게 장사하는 세상으로 이어집니다.
+              당신의 한 줄이 시작입니다. 다음 라이더의 바가지를 막고, 결국엔 모든 정비소가 정직하게 장사하는 세상으로 이어집니다.
             </p>
           </div>
 
@@ -496,13 +492,7 @@ export default function Home() {
             정비소 상세정보를 한눈에
           </h2>
           <p className="mb-10 text-sm leading-relaxed text-white/70">
-            직접 작성한 리뷰로 “정비소 상세”가 잠금 해제됩니다.
-            네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.
-            카카오·Google은 UI만 준비되어 있으며 OAuth는 곧 연결할 예정입니다.
-          </p>
-          <p className="-mt-6 mb-10 text-xs leading-relaxed text-white/80">
-            만약 로그인 동의 화면이 뜨지 않거나 오류가 발생하면, 서버 설정이 갱신 중이거나
-            잠시 지연될 수 있습니다. 1~2분 후 다시 시도해 주세요.
+            직접 작성한 리뷰로 정비소 상세정보가 잠금 해제됩니다. 네이버 계정으로 로그인하면 연락처까지 한 번에 확인할 수 있어요.
           </p>
           <div className="flex flex-wrap justify-start gap-3">
             <button
