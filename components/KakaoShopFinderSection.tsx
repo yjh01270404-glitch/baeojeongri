@@ -65,6 +65,9 @@ type Props = {
   finderTab: FinderTab;
   /** 실시간 탭 클릭 시 증가 → 카카오 API 재검색 */
   realtimeTick: number;
+  onRealtimeTab: () => void;
+  onDistanceTab: () => void;
+  onMapTab: () => void;
 };
 
 export function KakaoShopFinderSection({
@@ -73,6 +76,9 @@ export function KakaoShopFinderSection({
   onRequestLogin,
   finderTab,
   realtimeTick,
+  onRealtimeTab,
+  onDistanceTab,
+  onMapTab,
 }: Props) {
   const [status, setStatus] = useState<
     "idle" | "loading" | "ready" | "error"
@@ -354,6 +360,50 @@ export function KakaoShopFinderSection({
             주변 오토바이 정비소
           </h2>
           <p className="mt-3 text-sm text-gray-500">{locLabel}</p>
+
+          <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
+            {(
+              [
+                {
+                  key: "realtime" as const,
+                  title: "실시간",
+                  sub: "카카오 재검색",
+                  onClick: onRealtimeTab,
+                },
+                {
+                  key: "distance" as const,
+                  title: "거리순",
+                  sub: "가까운 순 정렬",
+                  onClick: onDistanceTab,
+                },
+                {
+                  key: "map" as const,
+                  title: "지도",
+                  sub: "전체 지도 뷰",
+                  onClick: onMapTab,
+                },
+              ] as const
+            ).map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={t.onClick}
+                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
+                  finderTab === t.key
+                    ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
+                    : "border-gray-100 bg-white hover:border-gray-200"
+                }`}
+              >
+                <div className="text-lg font-black tracking-tight text-gray-900 sm:text-xl">
+                  {t.title}
+                </div>
+                <div className="mt-1 text-[11px] leading-snug text-gray-400 sm:text-xs">
+                  {t.sub}
+                </div>
+              </button>
+            ))}
+          </div>
+
           <p className="mt-2 text-xs leading-relaxed text-gray-400">{tabHint}</p>
 
           {isApproximateLocation && (

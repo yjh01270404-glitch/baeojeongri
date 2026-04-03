@@ -357,7 +357,7 @@ export default function Home() {
                   type="text"
                   value={heroSearch}
                   onChange={(e) => setHeroSearch(e.target.value)}
-                  placeholder="지역·정비소명·증상 (예: 송파 타이어, 영등포 야간)"
+                  placeholder="지역·정비소명·증상"
                   className="min-w-0 flex-1 bg-transparent py-3 text-sm text-gray-800 outline-none placeholder:text-gray-400"
                 />
               </div>
@@ -370,6 +370,9 @@ export default function Home() {
               </button>
             </div>
             <p className="mt-3 text-xs text-gray-400">
+              예: 송파 타이어, 영등포 야간
+            </p>
+            <p className="text-xs text-gray-400">
               자주 찾는 검색: 지역+작업(강남 엔진오일), 기종(PCX), 증상(브레이크
               소음), 시간대(심야)
             </p>
@@ -390,48 +393,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-xl grid-cols-3 gap-2 border-t border-gray-100 pt-10 sm:gap-3">
-            {(
-              [
-                {
-                  key: "realtime" as const,
-                  title: "실시간",
-                  sub: "카카오 재검색",
-                  onClick: onRealtimeTab,
-                },
-                {
-                  key: "distance" as const,
-                  title: "거리순",
-                  sub: "가까운 순 정렬",
-                  onClick: onDistanceTab,
-                },
-                {
-                  key: "map" as const,
-                  title: "지도",
-                  sub: "전체 지도 뷰",
-                  onClick: onMapTab,
-                },
-              ] as const
-            ).map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={t.onClick}
-                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
-                  finderTab === t.key
-                    ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
-                    : "border-gray-100 bg-white hover:border-gray-200"
-                }`}
-              >
-                <div className="text-lg font-black tracking-tight text-gray-900 sm:text-xl">
-                  {t.title}
-                </div>
-                <div className="mt-1 text-[11px] leading-snug text-gray-400 sm:text-xs">
-                  {t.sub}
-                </div>
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -441,6 +402,9 @@ export default function Home() {
         onRequestLogin={() => setShowLogin(true)}
         finderTab={finderTab}
         realtimeTick={realtimeTick}
+        onRealtimeTab={onRealtimeTab}
+        onDistanceTab={onDistanceTab}
+        onMapTab={onMapTab}
       />
 
       {/* 주요 서비스 */}
@@ -620,11 +584,7 @@ export default function Home() {
             </div>
           </div>
           <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
-            © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
-            <span className="text-gray-300">
-              이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을
-              수 있습니다.
-            </span>
+            © {new Date().getFullYear()} 배오정리. All rights reserved.
           </p>
         </div>
       </footer>
