@@ -290,29 +290,29 @@ export default function Home() {
               배달라이더 전용 · 카카오맵 실시간 검색
             </span>
           </div>
-          <h1 className="mb-8 text-3xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-5xl">
-            만든이가 라이더로서 겪은
-            <br />
-            정비 가격의 불투명함,
-            <br />
-            공감에서 시작했습니다.
+          <h1 className="mb-8 text-2xl font-black leading-[1.15] tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-5xl">
+            정비소마다 가격이 왜 이렇게 다를까요?
+            <br className="hidden md:inline" />
+            라이더가 직접 만든 정비소 비교 플랫폼입니다.
           </h1>
 
           <div className="mx-auto mb-10 max-w-2xl space-y-5 text-[15px] leading-relaxed text-gray-700">
             <p>
-              정비소에서 견적을 들을 때마다 설명이 애매했고, 부품값이 덤탱이처럼
-              붙는 순간도 반복됐습니다. “대충 그럴 수 있지”라고 넘기면 되겠지만,
-              라이더 입장에서는 납득하기가 어려웠습니다.
+              견적을 받을 때마다 설명은 애매하고, 부품값은 어느새 훌쩍 올라가 있습니다.
+              <br className="hidden md:inline" />
+              같은 작업인데 정비소마다 가격이 두 배씩 차이 나는 건 라이더라면 누구나 겪어본 일입니다.
             </p>
             <p>
-              정비소마다 들쭉날쭉한 가격 횡포에, 저도 마음 한켠이 계속 걸렸습니다.
-              그래서 이 서비스를 만들었습니다. 지금은 미흡하지만, 더 많은 라이더들이
-              리뷰 하나씩 남겨주면 시간이 흐를수록 데이터가 쌓이고, 결국 모든 정비소가
-              일관되고 적정한 가격을 형성하는 쪽으로 나아갈 수 있다고 믿습니다.
+              배오정리는 라이더들이 직접 남긴 실제 정비 금액을 모아, 누구나 사전에 가격을
+              확인하고 합리적인 선택을 할 수 있도록 만들었습니다. 리뷰 하나하나가 쌓일수록
+              데이터는 정확해지고, 정비소들도 자연스럽게 적정 가격을 유지하게 됩니다.
             </p>
             <p className="rounded-2xl border border-[#00BFA5]/20 bg-[#00BFA5]/[0.06] px-5 py-4 text-gray-800">
-              아직 완벽하진 않아도 괜찮아요. 당신의 한 줄이 모여, 다음 라이더가
-              같은 불안 대신 “납득할 수 있는 기준”을 갖게 될 거라 믿습니다.
+              당신의 한 줄이 시작입니다.
+              <br />
+              다음 라이더의 바가지를 막고,
+              <br />
+              결국엔 모든 정비소가 정직하게 장사하는 세상으로 이어집니다.
             </p>
           </div>
 
