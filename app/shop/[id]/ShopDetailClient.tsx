@@ -150,6 +150,26 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
         <div className="border-t border-gray-100 bg-white md:hidden">
           <div className="mx-auto max-w-5xl px-6 py-3">
             <div className="flex flex-col gap-2">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-gray-800">
+                  메뉴
+                </span>
+                <button
+                  type="button"
+                  aria-label="메뉴 닫기"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:border-[#00BFA5]/60 hover:text-[#00BFA5]"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+                    <path
+                      d="M6 6l12 12M18 6L6 18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
