@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { Providers } from "@/components/Providers";
+import { SITE_ORIGIN } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +21,7 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://riderjeongbibi.vercel.app"),
+  metadataBase: new URL(SITE_ORIGIN),
   title:
     "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
   description:
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
       "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
     description:
       "라이더정비비교 — 배달라이더 전용 오토바이 정비소 검색·비교 플랫폼.",
-    url: "https://riderjeongbibi.vercel.app",
+    url: SITE_ORIGIN,
     siteName: "라이더정비비교",
     locale: "ko_KR",
     type: "website",

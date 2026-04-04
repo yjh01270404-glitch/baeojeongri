@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { SHOPS } from "@/lib/data";
+import { SITE_ORIGIN } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://riderjeongbibi.vercel.app";
+  const base = SITE_ORIGIN;
 
   const shopRoutes = SHOPS.map((shop) => ({
     url: `${base}/shop/${shop.id}`,

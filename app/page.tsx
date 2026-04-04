@@ -9,8 +9,7 @@ import {
   type FinderTab,
 } from "@/components/KakaoShopFinderSection";
 import { dispatchRequestNearbyLocation } from "@/lib/rjb-events";
-
-const SUPPORT_EMAIL = "support@riderjeongbibi.kr";
+import { SUPPORT_EMAIL } from "@/lib/site";
 
 type NavItem =
   | { label: string; href: string }

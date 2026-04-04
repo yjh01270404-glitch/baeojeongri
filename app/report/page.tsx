@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { LoginModal } from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
-
-const SUPPORT_EMAIL = "support@riderjeongbibi.kr";
+import { SUPPORT_EMAIL } from "@/lib/site";
 
 type ReportCategory =
   | "잘못된 정보"
