@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const shop = SHOPS.find((s) => s.id === id);
-  if (!shop) return { title: "정비소를 찾을 수 없습니다 | 배오정리" };
+  if (!shop) return { title: "정비소를 찾을 수 없습니다 | 라이더정비비교" };
 
   const stats = computeShopStats(shop);
   const topService = stats.avgPriceByService[0];
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${topService.serviceType} 평균 ${formatPrice(topService.avg)}.`
     : "";
 
-  const title = `${shop.name} | ${shop.city} ${shop.district} 오토바이 정비소 - 배오정리`;
+  const title = `${shop.name} | ${shop.city} ${shop.district} 오토바이 정비소 - 라이더정비비교`;
   const description = `${shop.city} ${shop.district} 오토바이 정비소 ${shop.name}. ${priceDesc} 라이더 리뷰 ${stats.reviewCount}개. 배달라이더가 직접 작성한 실방문 후기를 확인하세요.`;
 
   return {

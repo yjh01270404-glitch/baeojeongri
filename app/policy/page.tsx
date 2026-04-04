@@ -38,7 +38,7 @@ export default function PolicyPage() {
                   />
                 </svg>
               </div>
-              <span className="text-xl font-black text-[#00BFA5]">배오정리</span>
+              <span className="text-xl font-black text-[#00BFA5]">라이더정비비교</span>
             </Link>
           </div>
 
@@ -165,10 +165,10 @@ export default function PolicyPage() {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-3 text-lg font-black text-gray-900">1. 배오정리의 원칙</h2>
+            <h2 className="mb-3 text-lg font-black text-gray-900">1. 라이더정비비교의 원칙</h2>
             <div className="space-y-2 text-sm leading-relaxed text-gray-600">
               <p>
-                배오정리는 “정비소 선택을 더 합리적으로” 돕기 위한 리뷰·정보 플랫폼입니다.
+                라이더정비비교는 “정비소 선택을 더 합리적으로” 돕기 위한 리뷰·정보 플랫폼입니다.
                 가격·품질·서비스 경험을 공유해, 불필요한 시행착오를 줄이는 데 목적이 있습니다.
               </p>
               <p>
@@ -219,7 +219,7 @@ export default function PolicyPage() {
             <h2 className="mb-3 text-lg font-black text-gray-900">4. 정보 열람(잠금) 정책</h2>
             <div className="space-y-2 text-sm leading-relaxed text-gray-600">
               <p>
-                배오정리에서는 “리뷰 작성 기여”를 통해 더 많은 정보(정비소 상세 연락처/주소 등)를
+                라이더정비비교에서는 “리뷰 작성 기여”를 통해 더 많은 정보(정비소 상세 연락처/주소 등)를
                 열람할 수 있도록 설계했습니다.
               </p>
               <p>
@@ -234,7 +234,7 @@ export default function PolicyPage() {
             <h2 className="mb-3 text-lg font-black text-gray-900">5. 혜택 정책(예정 포함)</h2>
             <div className="space-y-2 text-sm leading-relaxed text-gray-600">
               <p>
-                배오정리는 “함께 만드는 서비스”를 목표로 하고 있습니다. 그래서 리뷰 품질과 기여도를
+                라이더정비비교는 “함께 만드는 서비스”를 목표로 하고 있습니다. 그래서 리뷰 품질과 기여도를
                 기반으로 한 혜택을 단계적으로 제공하려고 합니다.
               </p>
               <ul className="mt-3 space-y-2 text-sm">
@@ -267,7 +267,7 @@ export default function PolicyPage() {
             <h2 className="mb-3 text-lg font-black text-gray-900">6. 운영/중재 원칙</h2>
             <div className="space-y-2 text-sm leading-relaxed text-gray-600">
               <p>
-                배오정리는 업체/이용자 간 분쟁의 직접 당사자가 아니며, 리뷰는 정보 제공의 목적을 가집니다.
+                라이더정비비교는 업체/이용자 간 분쟁의 직접 당사자가 아니며, 리뷰는 정보 제공의 목적을 가집니다.
               </p>
               <p>
                 허위·부정확 정보, 명예훼손, 욕설/혐오 표현 등은 신고 접수 후 검토하여 삭제·제한될 수 있습니다.
@@ -298,7 +298,7 @@ export default function PolicyPage() {
                   제보·신고 하러 가기
                 </Link>
                 <a
-                  href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 문의")}`}
+                  href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("라이더정비비교 문의")}`}
                   className="rounded-xl bg-[#00BFA5] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#009E88]"
                 >
                   문의 메일 보내기
@@ -326,7 +326,7 @@ export default function PolicyPage() {
                     />
                   </svg>
                 </div>
-                <span className="text-xl font-black text-[#00BFA5]">배오정리</span>
+                <span className="text-xl font-black text-[#00BFA5]">라이더정비비교</span>
               </div>
               <p className="max-w-xs text-sm leading-relaxed text-gray-500">
                 배달라이더 전용 오토바이 정비소 리뷰·비교 서비스.
@@ -345,7 +345,7 @@ export default function PolicyPage() {
                     {
                       label: "제휴·등록",
                       href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
-                        "배오정리 제휴·정비소 등록",
+                        "라이더정비비교 제휴·정비소 등록",
                       )}`,
                     },
                   ],
@@ -399,7 +399,7 @@ export default function PolicyPage() {
             </div>
           </div>
           <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
-            © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
+            © {new Date().getFullYear()} 라이더정비비교. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을
               수 있습니다.

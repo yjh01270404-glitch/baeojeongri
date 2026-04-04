@@ -21,9 +21,28 @@ const notoSansKr = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://baeojeongri.vercel.app"),
-  title: "배오정리 | 배달라이더 전용 오토바이 정비소 리뷰·비교",
+  title:
+    "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
   description:
-    "모르면 바가지, 알면 제값. 배달라이더를 위한 정비소 가격·리뷰 비교 플랫폼.",
+    "라이더정비비교 — 배달라이더 전용 오토바이 정비소 검색, 거리순·실시간 조회, 정비 금액·리뷰 비교 플랫폼.",
+  keywords: [
+    "라이더정비비교",
+    "배달라이더 정비",
+    "오토바이 정비소",
+    "바이크 정비",
+    "정비소 비교",
+    "정비 가격",
+  ],
+  openGraph: {
+    title:
+      "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
+    description:
+      "라이더정비비교 — 배달라이더 전용 오토바이 정비소 검색·비교 플랫폼.",
+    url: "https://baeojeongri.vercel.app",
+    siteName: "라이더정비비교",
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

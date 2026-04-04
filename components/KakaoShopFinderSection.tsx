@@ -59,6 +59,9 @@ type Props = {
   onRealtimeTab: () => void;
   onDistanceTab: () => void;
   onMapTab: () => void;
+  /** 검색·실시간·내 주변 실행 전까지 목록/지도 미표시 */
+  resultsOpen: boolean;
+  onOpenResults: () => void;
 };
 
 export function KakaoShopFinderSection({
@@ -71,6 +74,8 @@ export function KakaoShopFinderSection({
   onRealtimeTab,
   onDistanceTab,
   onMapTab,
+  resultsOpen,
+  onOpenResults,
 }: Props) {
   const PAGE_SIZE = 18;
   const [status, setStatus] = useState<
@@ -78,7 +83,9 @@ export function KakaoShopFinderSection({
   >("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [places, setPlaces] = useState<KakaoPlaceItem[]>([]);
-  const [locLabel, setLocLabel] = useState("위치 확인 중…");
+  const [locLabel, setLocLabel] = useState(
+    "검색하기 · 실시간 · 내 주변을 누르면 목록이 열립니다",
+  );
   const [streetViewConfig, setStreetViewConfig] = useState<boolean | null>(
     null,
   );
@@ -191,18 +198,68 @@ export function KakaoShopFinderSection({
     }
   }, []);
 
+  const ensureLocationThenSearch = useCallback(async () => {
+    if (!navigator.geolocation) {
+      setLocLabel("위치 미지원 · 서울 시청 기준");
+      setIsApproximateLocation(true);
+      await searchNearby(DEFAULT_LAT, DEFAULT_LNG);
+      return;
+    }
+    await new Promise<void>((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          setIsApproximateLocation(false);
+          setLocLabel("내 위치 기준");
+          await searchNearby(pos.coords.latitude, pos.coords.longitude);
+          resolve();
+        },
+        async () => {
+          setLocLabel("서울 시청 기준(임시) · 아래에서 내 위치를 켤 수 있어요");
+          setIsApproximateLocation(true);
+          await searchNearby(DEFAULT_LAT, DEFAULT_LNG);
+          resolve();
+        },
+        { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+      );
+    });
+  }, [searchNearby]);
+
   useEffect(() => {
+    if (!resultsOpen) return;
     if (realtimeTick === 0) return;
     const c = lastCenterRef.current;
-    if (c) void searchNearby(c.lat, c.lng);
-  }, [realtimeTick, searchNearby]);
+    if (c) {
+      void searchNearby(c.lat, c.lng);
+    } else {
+      void ensureLocationThenSearch();
+    }
+  }, [realtimeTick, resultsOpen, searchNearby, ensureLocationThenSearch]);
+
+  /** 거리순·지도만 먼저 눌렀을 때 첫 데이터 로드 */
+  useEffect(() => {
+    if (!resultsOpen) return;
+    if (finderTab === "realtime") return;
+    if (status !== "idle") return;
+    if (places.length > 0) return;
+    void ensureLocationThenSearch();
+  }, [
+    resultsOpen,
+    finderTab,
+    status,
+    places.length,
+    ensureLocationThenSearch,
+  ]);
 
   const requestUserGpsLocation = useCallback(() => {
+    onOpenResults();
     setLocationHint(null);
     if (!navigator.geolocation) {
       setLocationHint(
-        "이 브라우저는 위치 정보를 지원하지 않습니다. 지도 앱에서 지역을 옮겨 검색해 주세요.",
+        "이 브라우저는 위치 정보를 지원하지 않습니다. 우선 서울 시청 기준으로 목록을 불러옵니다.",
       );
+      setLocLabel("위치 미지원 · 서울 시청 기준");
+      setIsApproximateLocation(true);
+      void searchNearby(DEFAULT_LAT, DEFAULT_LNG);
       return;
     }
 
@@ -214,22 +271,24 @@ export function KakaoShopFinderSection({
         await searchNearby(pos.coords.latitude, pos.coords.longitude);
         setLocationLoading(false);
       },
-      (err) => {
+      async (err) => {
         setLocationLoading(false);
         setIsApproximateLocation(true);
         if (err.code === 1) {
           setLocationHint(
-            "위치 사용이 꺼져 있어요. 주소창 왼쪽 자물쇠(또는 i 표시)를 눌러 ‘위치’를 허용한 뒤, 아래 버튼을 다시 눌러 주세요. 이미 ‘차단’이면 브라우저 설정에서 이 사이트의 위치 권한을 허용해야 합니다.",
+            "위치 사용이 꺼져 있어요. 주소창 왼쪽 자물쇠(또는 i 표시)를 눌러 ‘위치’를 허용한 뒤, 아래 버튼을 다시 눌러 주세요. 이미 ‘차단’이면 브라우저 설정에서 이 사이트의 위치 권한을 허용해야 합니다. 우선 서울 시청 기준으로 목록을 보여 드립니다.",
           );
         } else if (err.code === 3) {
           setLocationHint(
-            "위치 응답이 지연되었습니다. GPS/와이파이를 켠 뒤 다시 시도해 주세요.",
+            "위치 응답이 지연되었습니다. GPS/와이파이를 켠 뒤 다시 시도해 주세요. 우선 서울 시청 기준으로 목록을 보여 드립니다.",
           );
         } else {
           setLocationHint(
-            "위치를 가져오지 못했습니다. 잠시 후 다시 눌러 주세요.",
+            "위치를 가져오지 못했습니다. 잠시 후 다시 눌러 주세요. 우선 서울 시청 기준으로 목록을 보여 드립니다.",
           );
         }
+        setLocLabel("서울 시청 기준(임시) · 아래에서 내 위치를 켤 수 있어요");
+        await searchNearby(DEFAULT_LAT, DEFAULT_LNG);
       },
       {
         enableHighAccuracy: true,
@@ -237,10 +296,11 @@ export function KakaoShopFinderSection({
         maximumAge: 0,
       },
     );
-  }, [searchNearby]);
+  }, [searchNearby, onOpenResults]);
 
   useEffect(() => {
     const onRequestNearby = () => {
+      onOpenResults();
       document.getElementById("shop-finder")?.scrollIntoView({
         behavior: "smooth",
         block: "start",
@@ -253,50 +313,29 @@ export function KakaoShopFinderSection({
         REQUEST_NEARBY_LOCATION_EVENT,
         onRequestNearby,
       );
-  }, [requestUserGpsLocation]);
+  }, [requestUserGpsLocation, onOpenResults]);
 
   useEffect(() => {
-    let cancelled = false;
-    const key = getAppKey();
-    if (!key) {
+    if (resultsOpen) return;
+    if (!getAppKey()) {
       setStatus("error");
       setErrorMsg("NEXT_PUBLIC_KAKAO_MAP_APP_KEY를 설정해 주세요.");
       return;
     }
-
-    (async () => {
-      if (!navigator.geolocation) {
-        if (!cancelled) {
-          setLocLabel("위치 미지원 · 서울 시청 기준");
-          setIsApproximateLocation(true);
-          await searchNearby(DEFAULT_LAT, DEFAULT_LNG);
-        }
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          if (cancelled) return;
-          setIsApproximateLocation(false);
-          setLocLabel("내 위치 기준");
-          await searchNearby(pos.coords.latitude, pos.coords.longitude);
-        },
-        async () => {
-          if (cancelled) return;
-          setLocLabel("서울 시청 기준(임시) · 아래에서 내 위치를 켤 수 있어요");
-          setIsApproximateLocation(true);
-          await searchNearby(DEFAULT_LAT, DEFAULT_LNG);
-        },
-        { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
-      );
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [searchNearby]);
+    setPlaces([]);
+    setStatus("idle");
+    setErrorMsg(null);
+    setPage(1);
+    lastCenterRef.current = null;
+    setKakaoSdkReady(false);
+    setLocationHint(null);
+    setDetailPlace(null);
+    setLocLabel("검색하기 · 실시간 · 내 주변을 누르면 목록이 열립니다");
+    setIsApproximateLocation(false);
+  }, [resultsOpen]);
 
   const retryDefault = () => {
+    onOpenResults();
     setLocLabel("서울 시청 기준");
     setIsApproximateLocation(true);
     setLocationHint(null);
@@ -440,7 +479,7 @@ export function KakaoShopFinderSection({
             ))}
           </div>
 
-          {isApproximateLocation && (
+          {resultsOpen && isApproximateLocation && (
             <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-[#00BFA5]/25 bg-white px-5 py-5 text-left shadow-sm">
               <p className="text-sm font-bold text-gray-900">
                 내 근처 기준으로 다시 찾기
@@ -462,13 +501,15 @@ export function KakaoShopFinderSection({
             </div>
           )}
 
-          {locationHint && (
+          {resultsOpen && locationHint && (
             <p className="mx-auto mt-4 max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm leading-relaxed text-amber-950">
               {locationHint}
             </p>
           )}
 
-          {status === "error" && (
+          {status === "error" &&
+            errorMsg &&
+            (resultsOpen || !getAppKey()) && (
             <div className="mt-6 space-y-2">
               <p className="text-sm text-red-600">{errorMsg}</p>
               <button
@@ -480,15 +521,28 @@ export function KakaoShopFinderSection({
               </button>
             </div>
           )}
+
+          {!resultsOpen && getAppKey() && status === "idle" && (
+            <p className="mt-6 text-left text-sm leading-relaxed text-gray-500">
+              정비소 카드 목록은{" "}
+              <span className="font-semibold text-gray-700">검색하기</span>·
+              <span className="font-semibold text-gray-700">실시간</span> 또는
+              메뉴의{" "}
+              <span className="font-semibold text-gray-700">내 주변 정비소</span>
+              를 누른 뒤에 표시됩니다.
+            </p>
+          )}
         </div>
 
-        {status === "loading" && (
+        {resultsOpen && status === "loading" && (
           <div className="py-16 text-left text-sm font-medium text-gray-400">
             주변 정비소를 불러오는 중…
           </div>
         )}
 
-        {status === "ready" && filteredPlaces.length === 0 && (
+        {resultsOpen &&
+          status === "ready" &&
+          filteredPlaces.length === 0 && (
           <div className="py-16 text-left text-sm text-gray-500">
             {places.length === 0
               ? "반경 내 검색 결과가 없습니다."
@@ -496,7 +550,8 @@ export function KakaoShopFinderSection({
           </div>
         )}
 
-        {status === "ready" &&
+        {resultsOpen &&
+          status === "ready" &&
           finderTab === "map" &&
           filteredPlaces.length > 0 &&
           kakaoSdkReady && (
@@ -510,7 +565,8 @@ export function KakaoShopFinderSection({
             </div>
           )}
 
-        {status === "ready" &&
+        {resultsOpen &&
+          status === "ready" &&
           finderTab === "map" &&
           filteredPlaces.length > 0 &&
           !kakaoSdkReady && (
@@ -519,11 +575,12 @@ export function KakaoShopFinderSection({
             </p>
           )}
 
-        {status === "ready" &&
+        {resultsOpen &&
+          status === "ready" &&
           filteredPlaces.length > 0 &&
           finderTab !== "map" && (
             <>
-              <div className="grid grid-cols-3 gap-2.5 md:grid-cols-4 lg:grid-cols-5">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
                 {pagedPlaces.map((p) => (
                 <article
                   key={p.id}
@@ -547,7 +604,7 @@ export function KakaoShopFinderSection({
                     />
                   </div>
                   <div className="flex flex-1 flex-col p-1.5 text-left md:p-2">
-                    <h3 className="line-clamp-2 min-h-[2.75rem] text-[11px] font-bold leading-tight text-gray-900 md:text-sm">
+                    <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-bold leading-tight text-gray-900 sm:min-h-[2.75rem] md:text-sm">
                       {p.place_name}
                     </h3>
                     <p className="mt-1 hidden line-clamp-1 text-xs text-gray-400 md:block">

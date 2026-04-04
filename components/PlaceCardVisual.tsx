@@ -34,7 +34,7 @@ export function PlaceCardVisual({
   if (streetViewConfig === null) {
     return (
       <div
-        className="relative aspect-[5/2] w-full animate-pulse bg-gray-200 sm:aspect-[2/1]"
+        className="relative aspect-[16/7] w-full animate-pulse bg-gray-200 md:aspect-[2/1]"
         aria-hidden
       />
     );
@@ -42,14 +42,14 @@ export function PlaceCardVisual({
 
   if (!streetViewConfig || streetFailed) {
     return (
-      <div className="relative aspect-[5/2] w-full overflow-hidden bg-gray-200 sm:aspect-[2/1]">
+      <div className="relative aspect-[16/7] w-full overflow-hidden bg-gray-200 md:aspect-[2/1]">
         <KakaoMiniMap lat={lat} lng={lng} />
       </div>
     );
   }
 
   return (
-    <div className="relative aspect-[5/2] w-full overflow-hidden bg-gray-200 sm:aspect-[2/1]">
+    <div className="relative aspect-[16/7] w-full overflow-hidden bg-gray-200 md:aspect-[2/1]">
       <Image
         src={streetSrc}
         alt={`${placeName} 인근 거리 보기`}

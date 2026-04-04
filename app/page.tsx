@@ -24,7 +24,7 @@ const NAV_LINKS: NavItem[] = [
   { label: "제보·신고", href: "/report" },
   {
     label: "정비소 등록 문의",
-    href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 정비소 등록·제휴 문의")}`,
+    href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("라이더정비비교 정비소 등록·제휴 문의")}`,
   },
   { label: "이용안내", href: "#cta" },
 ];
@@ -53,6 +53,7 @@ export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const [finderTab, setFinderTab] = useState<FinderTab>("realtime");
   const [realtimeTick, setRealtimeTick] = useState(0);
+  const [finderResultsOpen, setFinderResultsOpen] = useState(false);
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -74,19 +75,27 @@ export default function Home() {
   };
 
   const onRealtimeTab = () => {
+    setFinderResultsOpen(true);
     setFinderTab("realtime");
     setRealtimeTick((n) => n + 1);
     setTimeout(scrollToFinder, 80);
   };
 
   const onDistanceTab = () => {
+    setFinderResultsOpen(true);
     setFinderTab("distance");
     setTimeout(scrollToFinder, 80);
   };
 
   const onMapTab = () => {
+    setFinderResultsOpen(true);
     setFinderTab("map");
     setTimeout(scrollToFinder, 80);
+  };
+
+  const closeFinderResults = () => {
+    setFinderResultsOpen(false);
+    setRealtimeTick(0);
   };
 
   const onNavClick = (
@@ -109,6 +118,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
+      {finderResultsOpen && (
+        <button
+          type="button"
+          aria-label="정비소 목록 닫기"
+          onClick={closeFinderResults}
+          className="fixed right-4 top-[5.25rem] z-[48] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-md transition hover:border-[#00BFA5]/50 hover:text-[#00BFA5] md:top-24"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      )}
+
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
       {/* 상단 안내바 */}
@@ -137,7 +169,7 @@ export default function Home() {
             </div>
             <div className="min-w-0">
               <div className="text-xl font-black leading-none text-[#00BFA5]">
-                배오정리
+                라이더정비비교
               </div>
               <div className="mt-0.5 text-[10px] text-gray-400">
                 배달 오토바이 정비소 · 실데이터
@@ -302,7 +334,7 @@ export default function Home() {
             정비소마다 가격이 왜 이렇게 다를까요?
           </h1>
           <p className="mt-3 text-left text-[18px] font-bold leading-[1.3] text-[#FFFBE6]">
-            라이더가 직접 만든 정비소 비교 플랫폼
+            라이더정비비교 — 라이더가 직접 만든 정비소 비교
           </p>
 
           <div className="mt-6 text-left text-[14px] leading-[1.8] text-white/90">
@@ -340,6 +372,8 @@ export default function Home() {
         onRealtimeTab={onRealtimeTab}
         onDistanceTab={onDistanceTab}
         onMapTab={onMapTab}
+        resultsOpen={finderResultsOpen}
+        onOpenResults={() => setFinderResultsOpen(true)}
       />
 
       {/* 주요 서비스 */}
@@ -426,7 +460,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <span className="text-xl font-black text-[#00BFA5]">
-                  배오정리
+                  라이더정비비교
                 </span>
               </div>
               <p className="max-w-xs text-sm leading-relaxed text-gray-500">
@@ -444,7 +478,7 @@ export default function Home() {
                     { label: "자가정비 정보", href: "/#services" },
                     {
                       label: "제휴·등록",
-                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 제휴·정비소 등록")}`,
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("라이더정비비교 제휴·정비소 등록")}`,
                     },
                   ],
                 },
@@ -456,7 +490,7 @@ export default function Home() {
                     { label: "제보·신고", href: "/report" },
                     {
                       label: "문의하기",
-                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 문의")}`,
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("라이더정비비교 문의")}`,
                     },
                   ],
                 },
@@ -495,7 +529,7 @@ export default function Home() {
             </div>
           </div>
           <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
-            © {new Date().getFullYear()} 배오정리. All rights reserved.
+            © {new Date().getFullYear()} 라이더정비비교. All rights reserved.
           </p>
         </div>
       </footer>

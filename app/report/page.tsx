@@ -26,7 +26,7 @@ export type ReportPayload = {
 };
 
 function buildMailto(payload: ReportPayload) {
-  const subject = `배오정리 제보·신고: ${payload.category}`;
+  const subject = `라이더정비비교 제보·신고: ${payload.category}`;
   const body = [
     `제보·신고 유형: ${payload.category}`,
     `정비소: ${payload.shopName}`,
@@ -78,7 +78,7 @@ export default function ReportPage() {
                   />
                 </svg>
               </div>
-              <span className="text-xl font-black text-[#00BFA5]">배오정리</span>
+              <span className="text-xl font-black text-[#00BFA5]">라이더정비비교</span>
             </Link>
           </div>
 
@@ -415,7 +415,7 @@ export default function ReportPage() {
                     />
                   </svg>
                 </div>
-                <span className="text-xl font-black text-[#00BFA5]">배오정리</span>
+                <span className="text-xl font-black text-[#00BFA5]">라이더정비비교</span>
               </div>
               <p className="max-w-xs text-sm leading-relaxed text-gray-500">
                 제보는 더 나은 정비 정보로 이어집니다.
@@ -443,7 +443,7 @@ export default function ReportPage() {
                   links: [
                     {
                       label: "문의하기",
-                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("배오정리 문의")}`,
+                      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("라이더정비비교 문의")}`,
                     },
                     {
                       label: "서비스 이용약관(문의)",
@@ -474,7 +474,7 @@ export default function ReportPage() {
           </div>
 
           <p className="mt-12 border-t border-gray-100 pt-6 text-left text-xs text-gray-400">
-            © {new Date().getFullYear()} 배오정리. All rights reserved. ·{" "}
+            © {new Date().getFullYear()} 라이더정비비교. All rights reserved. ·{" "}
             <span className="text-gray-300">
               이 페이지에는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.
             </span>
