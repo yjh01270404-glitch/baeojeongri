@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { KakaoFullMapView } from "@/components/KakaoFullMapView";
 import { PlaceDetailModal } from "@/components/PlaceDetailModal";
 import { ShopResultCard } from "@/components/ShopResultCard";
@@ -104,12 +111,32 @@ export function KakaoShopFinderSection({
   const [detailPlace, setDetailPlace] = useState<KakaoPlaceItem | null>(null);
   const [kakaoSdkReady, setKakaoSdkReady] = useState(false);
   const [page, setPage] = useState(1);
+  /** 모바일: 지도 영역 높이(vh). 핸들 드래그로 조절 */
+  const [mapVhMobile, setMapVhMobile] = useState(36);
+  const [isMdUp, setIsMdUp] = useState(false);
+  const sheetDragRef = useRef<{
+    pointerId: number;
+    startY: number;
+    startVh: number;
+  } | null>(null);
 
   const lastCenterRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const onMapSelectPlace = useCallback((p: KakaoPlaceItem) => {
     setDetailPlace(p);
   }, []);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setIsMdUp(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    if (!resultsOpen) setMapVhMobile(36);
+  }, [resultsOpen]);
 
   useEffect(() => {
     fetch("/api/streetview-config")
@@ -377,6 +404,52 @@ export function KakaoShopFinderSection({
     setPage(1);
   }, [heroFilter, finderTab, places.length]);
 
+  const onSheetPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (isMdUp) return;
+      e.preventDefault();
+      const el = e.currentTarget;
+      el.setPointerCapture(e.pointerId);
+      sheetDragRef.current = {
+        pointerId: e.pointerId,
+        startY: e.clientY,
+        startVh: mapVhMobile,
+      };
+    },
+    [isMdUp, mapVhMobile],
+  );
+
+  const onSheetPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const d = sheetDragRef.current;
+      if (!d || d.pointerId !== e.pointerId) return;
+      const deltaVh = ((d.startY - e.clientY) / window.innerHeight) * 100;
+      const next = Math.round(
+        Math.min(72, Math.max(18, d.startVh + deltaVh)),
+      );
+      setMapVhMobile(next);
+    },
+    [],
+  );
+
+  const onSheetPointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const d = sheetDragRef.current;
+      if (!d || d.pointerId !== e.pointerId) return;
+      sheetDragRef.current = null;
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+    },
+    [],
+  );
+
+  const onSheetLostPointerCapture = useCallback(() => {
+    sheetDragRef.current = null;
+  }, []);
+
   return (
     <section
       id="shop-finder"
@@ -547,7 +620,7 @@ export function KakaoShopFinderSection({
             <div className="flex justify-center py-2 md:hidden">
               <div className="h-1 w-9 rounded-full bg-gray-200" />
             </div>
-            <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 p-3 md:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
@@ -607,28 +680,66 @@ export function KakaoShopFinderSection({
                 ) : null}
               </div>
 
-              {/* 지도 영역 */}
+              {/* 지도 영역 (모바일: vh 드래그 조절) */}
               {kakaoSdkReady ? (
-                <KakaoFullMapView
-                  places={filteredPlaces}
-                  centerLat={mapCenter.lat}
-                  centerLng={mapCenter.lng}
-                  onSelectPlace={onMapSelectPlace}
-                  className={
-                    finderTab === "map"
-                      ? "h-[min(52vh,440px)] w-full border-0 border-b border-gray-200 bg-gray-200 shadow-inner"
-                      : "h-[min(36vh,300px)] w-full border-0 border-b border-gray-200 bg-gray-200 shadow-inner md:h-[min(40vh,360px)]"
+                <div
+                  className={`relative w-full overflow-hidden border-b border-gray-200 bg-gray-200 shadow-inner ${
+                    isMdUp
+                      ? finderTab === "map"
+                        ? "h-[min(52vh,440px)]"
+                        : "h-[min(40vh,360px)]"
+                      : "min-h-[100px]"
+                  }`}
+                  style={
+                    !isMdUp
+                      ? {
+                          height: `${mapVhMobile}vh`,
+                          maxHeight: "72vh",
+                        }
+                      : undefined
                   }
-                />
+                >
+                  <KakaoFullMapView
+                    places={filteredPlaces}
+                    centerLat={mapCenter.lat}
+                    centerLng={mapCenter.lng}
+                    onSelectPlace={onMapSelectPlace}
+                    className="h-full min-h-0 w-full border-0 bg-transparent shadow-none"
+                  />
+                </div>
               ) : (
-                <div className="flex h-[min(36vh,300px)] items-center justify-center border-b border-gray-200 bg-gray-100 text-sm text-gray-500">
+                <div
+                  className={`flex items-center justify-center border-b border-gray-200 bg-gray-100 text-sm text-gray-500 ${
+                    isMdUp
+                      ? "h-[min(40vh,360px)]"
+                      : "min-h-[100px]"
+                  }`}
+                  style={
+                    !isMdUp
+                      ? { height: `${mapVhMobile}vh`, maxHeight: "72vh" }
+                      : undefined
+                  }
+                >
                   지도를 불러오는 중입니다…
                 </div>
               )}
 
-              {/* 바텀 시트 핸들 */}
-              <div className="flex justify-center bg-white py-2 md:hidden">
-                <div className="h-1 w-10 rounded-full bg-gray-200" />
+              {/* 바텀 시트 핸들 — 위아래 드래그로 지도·목록 비율 조절 (모바일) */}
+              <div
+                role="separator"
+                aria-orientation="horizontal"
+                aria-label="지도와 목록 비율 조절. 위아래로 드래그하세요."
+                aria-valuemin={18}
+                aria-valuemax={72}
+                aria-valuenow={mapVhMobile}
+                onPointerDown={onSheetPointerDown}
+                onPointerMove={onSheetPointerMove}
+                onPointerUp={onSheetPointerUp}
+                onPointerCancel={onSheetPointerUp}
+                onLostPointerCapture={onSheetLostPointerCapture}
+                className="flex cursor-row-resize touch-none select-none items-center justify-center bg-white py-3 md:hidden"
+              >
+                <div className="h-1 w-12 rounded-full bg-gray-300" />
               </div>
 
               {/* 정렬 · 뷰 (네이버 필터 바 느낌) */}
@@ -672,9 +783,9 @@ export function KakaoShopFinderSection({
                 </div>
               </div>
 
-              {/* 결과 그리드: 모바일 2열 */}
+              {/* 결과 그리드: 모바일 1열, md 이상 3~4열 */}
               <div className="max-h-[min(52vh,560px)] overflow-y-auto overscroll-contain bg-[#fafafa] px-2 py-3 md:max-h-none md:overflow-visible">
-                <div className="grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 sm:gap-2.5 md:grid-cols-3 lg:grid-cols-4">
                   {pagedPlaces.map((p) => (
                     <ShopResultCard
                       key={p.id}
