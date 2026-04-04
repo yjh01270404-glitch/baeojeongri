@@ -1,4 +1,4 @@
-export const AUTH_STORAGE_KEY = "boj_auth_session_v1";
+export const AUTH_STORAGE_KEY = "rjb_auth_session_v1";
 const STORAGE_KEY = AUTH_STORAGE_KEY;
 
 export type AuthProvider = "naver" | "kakao" | "google";

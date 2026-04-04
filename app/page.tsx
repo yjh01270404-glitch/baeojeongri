@@ -8,9 +8,9 @@ import {
   KakaoShopFinderSection,
   type FinderTab,
 } from "@/components/KakaoShopFinderSection";
-import { dispatchRequestNearbyLocation } from "@/lib/boj-events";
+import { dispatchRequestNearbyLocation } from "@/lib/rjb-events";
 
-const SUPPORT_EMAIL = "support@baeojeongri.kr";
+const SUPPORT_EMAIL = "support@riderjeongbibi.kr";
 
 type NavItem =
   | { label: string; href: string }
@@ -59,7 +59,7 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      localStorage.removeItem("boj_auth_session_v1");
+      localStorage.removeItem("rjb_auth_session_v1");
     } catch {
       /* ignore */
     }

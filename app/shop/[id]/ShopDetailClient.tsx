@@ -83,7 +83,7 @@ function ReviewModal({ shopName, onClose, onSubmit }: { shopName: string; onClos
 export default function ShopDetailClient({ shop }: { shop: Shop }) {
   const [isUnlocked, setIsUnlocked] = useState(() => {
     try {
-      return localStorage.getItem("boj_unlocked") === "true";
+      return localStorage.getItem("rjb_unlocked") === "true";
     } catch {
       return false;
     }
@@ -92,7 +92,7 @@ export default function ShopDetailClient({ shop }: { shop: Shop }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleUnlock = () => {
-    localStorage.setItem("boj_unlocked", "true");
+    localStorage.setItem("rjb_unlocked", "true");
     setIsUnlocked(true);
   };
 

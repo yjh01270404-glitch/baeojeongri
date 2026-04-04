@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KakaoFullMapView } from "@/components/KakaoFullMapView";
 import { PlaceCardVisual } from "@/components/PlaceCardVisual";
 import { PlaceDetailModal } from "@/components/PlaceDetailModal";
-import { REQUEST_NEARBY_LOCATION_EVENT } from "@/lib/boj-events";
+import { REQUEST_NEARBY_LOCATION_EVENT } from "@/lib/rjb-events";
 import type { KakaoPlaceItem } from "@/lib/kakao-place";
 import { loadKakaoMapsScript } from "@/lib/kakao-loader";
 import { naverMapSearchUrl } from "@/lib/map-links";

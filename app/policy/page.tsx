@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { LoginModal } from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
 
-const SUPPORT_EMAIL = "support@baeojeongri.kr";
+const SUPPORT_EMAIL = "support@riderjeongbibi.kr";
 
 export default function PolicyPage() {
   const [showLogin, setShowLogin] = useState(false);

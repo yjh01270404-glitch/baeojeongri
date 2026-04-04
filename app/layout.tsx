@@ -20,7 +20,7 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://baeojeongri.vercel.app"),
+  metadataBase: new URL("https://riderjeongbibi.vercel.app"),
   title:
     "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
   description:
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
       "라이더정비비교 | 배달라이더 오토바이 정비소 가격·거리 검색·리뷰 비교",
     description:
       "라이더정비비교 — 배달라이더 전용 오토바이 정비소 검색·비교 플랫폼.",
-    url: "https://baeojeongri.vercel.app",
+    url: "https://riderjeongbibi.vercel.app",
     siteName: "라이더정비비교",
     locale: "ko_KR",
     type: "website",

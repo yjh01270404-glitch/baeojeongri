@@ -37,7 +37,7 @@ type PlaceUserReview = {
   createdAt: number;
 };
 
-const REVIEWS_KEY = "boj_place_reviews_v1";
+const REVIEWS_KEY = "rjb_place_reviews_v1";
 
 function safeReadReviews(): PlaceUserReview[] {
   if (typeof window === "undefined") return [];
