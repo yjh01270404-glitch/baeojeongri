@@ -8,6 +8,8 @@ type Props = {
   centerLat: number;
   centerLng: number;
   onSelectPlace: (p: KakaoPlaceItem) => void;
+  /** 컨테이너 높이·모서리 (기본: 큰 지도 뷰) */
+  className?: string;
 };
 
 /** 목록 결과를 카카오 지도에 전부 표시 (마커 클릭 → 상세) */
@@ -16,6 +18,7 @@ export function KakaoFullMapView({
   centerLat,
   centerLng,
   onSelectPlace,
+  className,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +80,10 @@ export function KakaoFullMapView({
   return (
     <div
       ref={containerRef}
-      className="h-[min(70vh,560px)] w-full rounded-2xl border border-gray-200 bg-gray-200 shadow-inner"
+      className={
+        className ??
+        "h-[min(70vh,560px)] w-full rounded-2xl border border-gray-200 bg-gray-200 shadow-inner"
+      }
       role="presentation"
     />
   );

@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KakaoFullMapView } from "@/components/KakaoFullMapView";
-import { PlaceCardVisual } from "@/components/PlaceCardVisual";
 import { PlaceDetailModal } from "@/components/PlaceDetailModal";
+import { ShopResultCard } from "@/components/ShopResultCard";
 import { REQUEST_NEARBY_LOCATION_EVENT } from "@/lib/rjb-events";
 import type { KakaoPlaceItem } from "@/lib/kakao-place";
 import { loadKakaoMapsScript } from "@/lib/kakao-loader";
-import { naverMapSearchUrl } from "@/lib/map-links";
 
 export type { KakaoPlaceItem } from "@/lib/kakao-place";
 
@@ -46,6 +45,12 @@ function maskPhone(phone: string) {
   const d = phone.replace(/\D/g, "");
   if (d.length < 8) return "로그인 후 확인";
   return `${d.slice(0, 3)}-****-${d.slice(-4)}`;
+}
+
+function shortAddress(p: KakaoPlaceItem, max = 40) {
+  const s = p.road_address_name || p.address_name || "";
+  if (s.length <= max) return s;
+  return `${s.slice(0, max)}…`;
 }
 
 type Props = {
@@ -395,7 +400,7 @@ export function KakaoShopFinderSection({
           <p className="mt-3 text-sm text-gray-500">{locLabel}</p>
 
           <div className="mt-4 max-w-2xl">
-            <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:flex-row sm:items-stretch">
+            <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg sm:flex-row sm:items-stretch">
               <div className="flex flex-1 items-center gap-3 px-5 py-3 sm:py-0">
                 <svg
                   viewBox="0 0 20 20"
@@ -436,48 +441,50 @@ export function KakaoShopFinderSection({
             </p>
           </div>
 
-          <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
-            {(
-              [
-                {
-                  key: "realtime" as const,
-                  title: "실시간",
-                  sub: "카카오 재검색",
-                  onClick: onRealtimeTab,
-                },
-                {
-                  key: "distance" as const,
-                  title: "거리순",
-                  sub: "가까운 순 정렬",
-                  onClick: onDistanceTab,
-                },
-                {
-                  key: "map" as const,
-                  title: "지도",
-                  sub: "전체 지도 뷰",
-                  onClick: onMapTab,
-                },
-              ] as const
-            ).map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={t.onClick}
-                className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
-                  finderTab === t.key
-                    ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
-                    : "border-gray-100 bg-white hover:border-gray-200"
-                }`}
-              >
-                <div className="text-lg font-black tracking-tight text-gray-900 sm:text-xl">
-                  {t.title}
-                </div>
-                <div className="mt-1 text-[11px] leading-snug text-gray-400 sm:text-xs">
-                  {t.sub}
-                </div>
-              </button>
-            ))}
-          </div>
+          {!resultsOpen && (
+            <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
+              {(
+                [
+                  {
+                    key: "realtime" as const,
+                    title: "실시간",
+                    sub: "카카오 재검색",
+                    onClick: onRealtimeTab,
+                  },
+                  {
+                    key: "distance" as const,
+                    title: "거리순",
+                    sub: "가까운 순 정렬",
+                    onClick: onDistanceTab,
+                  },
+                  {
+                    key: "map" as const,
+                    title: "지도",
+                    sub: "전체 지도 뷰",
+                    onClick: onMapTab,
+                  },
+                ] as const
+              ).map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={t.onClick}
+                  className={`rounded-xl border px-2 py-4 text-left transition sm:px-4 ${
+                    finderTab === t.key
+                      ? "border-[#00BFA5] bg-[#00BFA5]/10 shadow-sm"
+                      : "border-gray-100 bg-white shadow-sm hover:border-gray-200"
+                  }`}
+                >
+                  <div className="text-lg font-black tracking-tight text-gray-900 sm:text-xl">
+                    {t.title}
+                  </div>
+                  <div className="mt-1 text-[11px] leading-snug text-gray-400 sm:text-xs">
+                    {t.sub}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
 
           {resultsOpen && isApproximateLocation && (
             <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-[#00BFA5]/25 bg-white px-5 py-5 text-left shadow-sm">
@@ -535,166 +542,180 @@ export function KakaoShopFinderSection({
         </div>
 
         {resultsOpen && status === "loading" && (
-          <div className="py-16 text-left text-sm font-medium text-gray-400">
-            주변 정비소를 불러오는 중…
+          <div className="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+            <div className="h-[min(36vh,280px)] animate-pulse bg-gray-200" />
+            <div className="flex justify-center py-2 md:hidden">
+              <div className="h-1 w-9 rounded-full bg-gray-200" />
+            </div>
+            <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3 md:grid-cols-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-28 animate-pulse rounded-xl bg-gray-100"
+                  aria-hidden
+                />
+              ))}
+            </div>
+            <p className="pb-4 text-center text-sm text-gray-400">
+              주변 정비소를 불러오는 중…
+            </p>
           </div>
         )}
 
         {resultsOpen &&
           status === "ready" &&
           filteredPlaces.length === 0 && (
-          <div className="py-16 text-left text-sm text-gray-500">
-            {places.length === 0
-              ? "반경 내 검색 결과가 없습니다."
-              : "조건에 맞는 정비소가 없습니다. 검색어나 작업 필터를 바꿔 보세요."}
-          </div>
-        )}
-
-        {resultsOpen &&
-          status === "ready" &&
-          finderTab === "map" &&
-          filteredPlaces.length > 0 &&
-          kakaoSdkReady && (
-            <div className="mb-6">
-              <KakaoFullMapView
-                places={filteredPlaces}
-                centerLat={mapCenter.lat}
-                centerLng={mapCenter.lng}
-                onSelectPlace={onMapSelectPlace}
-              />
+            <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-10 text-left text-sm text-gray-500 shadow-lg">
+              {places.length === 0
+                ? "반경 내 검색 결과가 없습니다."
+                : "조건에 맞는 정비소가 없습니다. 검색어를 바꿔 보세요."}
             </div>
           )}
 
         {resultsOpen &&
           status === "ready" &&
-          finderTab === "map" &&
-          filteredPlaces.length > 0 &&
-          !kakaoSdkReady && (
-            <p className="mb-6 text-left text-sm text-gray-500">
-              지도 SDK를 불러오는 중입니다. 잠시 후 다시 전환해 주세요.
-            </p>
-          )}
-
-        {resultsOpen &&
-          status === "ready" &&
-          filteredPlaces.length > 0 &&
-          finderTab !== "map" && (
-            <>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
-                {pagedPlaces.map((p) => (
-                <article
-                  key={p.id}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setDetailPlace(p);
-                    }
-                  }}
-                  onClick={() => setDetailPlace(p)}
-                  className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:border-[#00BFA5] hover:shadow-md"
-                >
-                  <div className="shrink-0">
-                    <PlaceCardVisual
-                      lat={Number(p.y)}
-                      lng={Number(p.x)}
-                      placeName={p.place_name}
-                      streetViewConfig={streetViewConfig}
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col p-1.5 text-left md:p-2">
-                    <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-bold leading-tight text-gray-900 sm:min-h-[2.75rem] md:text-sm">
-                      {p.place_name}
-                    </h3>
-                    <p className="mt-1 hidden line-clamp-1 text-xs text-gray-400 md:block">
-                      {p.category_name}
-                    </p>
-                    <p className="mt-1 hidden line-clamp-2 text-xs text-gray-600 sm:block">
-                      {p.road_address_name || p.address_name}
-                    </p>
-                    {p.phone ? (
-                      <div className="mt-1.5 hidden sm:block">
-                        {isLoggedIn ? (
-                          <p className="text-xs font-medium text-gray-800">
-                            📞 {p.phone}
-                          </p>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onRequestLogin();
-                            }}
-                            className="text-left text-xs font-medium text-[#00BFA5] underline-offset-2 hover:underline"
-                          >
-                            📞 {maskPhone(p.phone)} — 로그인하고 전화번호 보기
-                          </button>
-                        )}
-                      </div>
-                    ) : null}
-                    <div className="mt-auto space-y-1 pt-1.5">
-                      {p.distance ? (
-                        <p className="min-h-[0.875rem] text-[10px] font-bold text-[#00BFA5] md:text-xs">
-                          {formatDistance(p.distance)} · 근처
-                        </p>
-                      ) : (
-                        <p className="min-h-[0.875rem] text-[10px] font-bold text-transparent md:text-xs">
-                          거리정보
-                        </p>
-                      )}
-                      <div
-                        className="flex min-h-[1.9rem] flex-wrap gap-1 md:min-h-[2.1rem] md:gap-2"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <a
-                          href={naverMapSearchUrl(p.place_name)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex min-w-0 flex-1 items-center justify-center rounded-md border border-[#03C75A] bg-[#03C75A] px-1.5 py-1 text-[10px] font-bold text-white transition hover:brightness-95 md:rounded-lg md:px-2 md:text-[11px]"
-                        >
-                          <span className="sm:hidden">네이버</span>
-                          <span className="hidden sm:inline">네이버지도</span>
-                        </a>
-                        <a
-                          href={p.place_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex min-w-0 flex-1 items-center justify-center rounded-md border border-[#FEE500] bg-[#FEE500] px-1.5 py-1 text-[10px] font-bold text-[#3C1E1E] transition hover:brightness-95 md:rounded-lg md:px-2 md:text-[11px]"
-                        >
-                          <span className="sm:hidden">카카오</span>
-                          <span className="hidden sm:inline">카카오맵</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-                ))}
+          filteredPlaces.length > 0 && (
+            <div className="mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+              {/* 상단 검색 요약 (네이버 지도 검색창 느낌) */}
+              <div className="flex items-center gap-2 border-b border-gray-100 bg-white px-3 py-2.5">
+                <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-800">
+                  {heroFilter.trim()
+                    ? heroFilter
+                    : "오토바이 정비 · 주변 검색 결과"}
+                </span>
+                {heroFilter.trim() ? (
+                  <button
+                    type="button"
+                    onClick={() => onHeroFilterChange("")}
+                    className="shrink-0 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                    aria-label="검색어 지우기"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-4 w-4"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <path
+                        d="M6 6l12 12M18 6L6 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                ) : null}
               </div>
-              {totalPages > 1 && (
-                <div className="mt-5 flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    disabled={page === 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    이전
-                  </button>
-                  <span className="text-xs font-medium text-gray-500">
-                    {page} / {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={page === totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    다음 페이지
-                  </button>
+
+              {/* 지도 영역 */}
+              {kakaoSdkReady ? (
+                <KakaoFullMapView
+                  places={filteredPlaces}
+                  centerLat={mapCenter.lat}
+                  centerLng={mapCenter.lng}
+                  onSelectPlace={onMapSelectPlace}
+                  className={
+                    finderTab === "map"
+                      ? "h-[min(52vh,440px)] w-full border-0 border-b border-gray-200 bg-gray-200 shadow-inner"
+                      : "h-[min(36vh,300px)] w-full border-0 border-b border-gray-200 bg-gray-200 shadow-inner md:h-[min(40vh,360px)]"
+                  }
+                />
+              ) : (
+                <div className="flex h-[min(36vh,300px)] items-center justify-center border-b border-gray-200 bg-gray-100 text-sm text-gray-500">
+                  지도를 불러오는 중입니다…
                 </div>
               )}
-            </>
+
+              {/* 바텀 시트 핸들 */}
+              <div className="flex justify-center bg-white py-2 md:hidden">
+                <div className="h-1 w-10 rounded-full bg-gray-200" />
+              </div>
+
+              {/* 정렬 · 뷰 (네이버 필터 바 느낌) */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 bg-[#f5f6f8] px-3 py-2.5">
+                <span className="text-xs font-medium text-gray-600">
+                  현재 위치 기준
+                </span>
+                <div className="ml-auto flex flex-wrap justify-end gap-1">
+                  {(
+                    [
+                      {
+                        key: "realtime" as const,
+                        label: "실시간",
+                        onClick: onRealtimeTab,
+                      },
+                      {
+                        key: "distance" as const,
+                        label: "거리순",
+                        onClick: onDistanceTab,
+                      },
+                      {
+                        key: "map" as const,
+                        label: "지도",
+                        onClick: onMapTab,
+                      },
+                    ] as const
+                  ).map((t) => (
+                    <button
+                      key={t.key}
+                      type="button"
+                      onClick={t.onClick}
+                      className={`rounded-full border px-3 py-1 text-xs font-bold transition ${
+                        finderTab === t.key
+                          ? "border-[#00BFA5] bg-white text-[#00BFA5] shadow-sm"
+                          : "border-transparent bg-white/60 text-gray-600 hover:bg-white"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 결과 그리드: 모바일 2열 */}
+              <div className="max-h-[min(52vh,560px)] overflow-y-auto overscroll-contain bg-[#fafafa] px-2 py-3 md:max-h-none md:overflow-visible">
+                <div className="grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 lg:grid-cols-4">
+                  {pagedPlaces.map((p) => (
+                    <ShopResultCard
+                      key={p.id}
+                      place={p}
+                      distanceLabel={formatDistance(p.distance)}
+                      addressShort={shortAddress(p)}
+                      isLoggedIn={isLoggedIn}
+                      onRequestLogin={onRequestLogin}
+                      onOpenDetail={() => setDetailPlace(p)}
+                      streetViewConfig={streetViewConfig}
+                      maskPhone={maskPhone}
+                    />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-4 flex items-center justify-center gap-2 pb-2">
+                    <button
+                      type="button"
+                      disabled={page === 1}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      이전
+                    </button>
+                    <span className="text-xs font-medium text-gray-500">
+                      {page} / {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={page === totalPages}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      다음 페이지
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
         <p className="mt-10 text-left text-[11px] leading-relaxed text-gray-400">

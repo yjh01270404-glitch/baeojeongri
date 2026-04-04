@@ -122,7 +122,7 @@ export default function Home() {
           type="button"
           aria-label="정비소 목록 닫기"
           onClick={closeFinderResults}
-          className="fixed right-4 top-[5.25rem] z-[48] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-md transition hover:border-[#00BFA5]/50 hover:text-[#00BFA5] md:top-24"
+          className="fixed right-4 top-[5.25rem] z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-md transition hover:border-[#00BFA5]/50 hover:text-[#00BFA5] md:top-24"
         >
           <svg
             viewBox="0 0 24 24"
